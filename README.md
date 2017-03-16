@@ -6,8 +6,9 @@
 This module provides the datatype `Zero`. All instances of this datatype are identical, and represent the value zero. (The term "singular datatype" might be appropriate if it was not already used for another concept in julia.)
 
 `Zero` is a subtype of `Real`. The most common operations for real values, such as +, -, \*, /, <, >, etc. are defined. Operations like * propagate the `Zero` type to their return values.
+(Existing functions may require some modifications to work with the `Zero` type. In particular, type assertions might be too restrictive.)
 
-It is also possible to use `Complex(Zero(),Zero())` to represent a complex value equal to zero.
+`Complex(Zero(),Zero())` can be used to represent a complex value equal to zero.
 
 Since the value of a `Zero` is known at compile-time, the complier might be able to make optimizations that it would not otherwise do.
 
