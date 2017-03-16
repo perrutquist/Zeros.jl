@@ -66,8 +66,8 @@ for op in [:fma :muladd]
   @eval $op(::Zero, ::Zero, ::Zero) = Zero()
   @eval $op(::Zero, ::Real, ::Zero) = Zero()
   @eval $op(::Real, ::Zero, ::Zero) = Zero()
-  @eval $op{T<:Real}(::Zero, ::T, x::T) = x
-  @eval $op{T<:Real}(::T, ::Zero, x::T) = x
+  @eval $op(::Zero, x::Real, y::Real) = convert(promote_type(typeof(x),typeof(y)),y)
+  @eval $op(x::Real, ::Zero, y::Real) = convert(promote_type(typeof(x),typeof(y)),y)
 end
 
 isodd(::Zero) = false
