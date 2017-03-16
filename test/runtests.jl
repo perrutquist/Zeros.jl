@@ -41,6 +41,12 @@ Z = Zero()
 @test !isodd(Z)
 @test iseven(Z)
 @test string(Z) == "0̸"
+@test fma(Z,1,Z) === Z
+@test muladd(Z,1,Z) === Z
+@test fma(Z,1,3) === 3
+@test muladd(Z,1,3) === 3
+@test fma(Z,Z,Z) === Z
+@test muladd(Z,Z,Z) === Z
 
 #Complex
 C = Complex(Z,Z)

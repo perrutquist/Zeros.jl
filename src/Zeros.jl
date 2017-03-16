@@ -1,16 +1,10 @@
 module Zeros
 
-import Base: +, -, *, /, <, >, <=, >=,
+import Base: +, -, *, /, <, >, <=, >=, fma, muladd,
      ldexp, copysign, flipsign, sign, round, floor, ceil, trunc,
      promote_rule, convert, show, significand, isodd, iseven
 
 export Zero, testzero
-
-# Preformance comparison: Naïve implementation of axpy!()
-# axpy!(a,X,Y) = Y .= a.*X .+ Y
-# r = rand(Float64, 1000_000);
-# @time axpy(0.0, r, r)
-# @time axpy(Zero(), r, r)
 
  "A type that stores no data, and holds the value zero."
 immutable Zero <: Real
@@ -55,21 +49,26 @@ convert{T<:Number}(::Type{Zero}, x::T) = x==zero(T) ? Zero() : throw(InexactErro
 >(::Zero,::Zero) = false
 >=(::Zero,::Zero) = true
 <=(::Zero,::Zero) = true
-# == and != work by default methods
 
 ldexp(::Zero, ::Integer) = Zero()
 copysign(::Zero,::Real) = Zero()
 flipsign(::Zero,::Real) = Zero()
 
 # Alerady working due to default definitions:
-# abs, isinf, isnan, isinteger, isreal, isimag,
+# ==, !=, abs, isinf, isnan, isinteger, isreal, isimag,
 # signed, unsigned, float, big, complex
 
 for op in [:(-), :sign, :round, :floor, :ceil, :trunc, :significand]
   @eval $op(::Zero) = Zero()
 end
 
-# TODO: fma, muladd
+for op in [:fma :muladd]
+  @eval $op(::Zero, ::Zero, ::Zero) = Zero()
+  @eval $op(::Zero, ::Real, ::Zero) = Zero()
+  @eval $op(::Real, ::Zero, ::Zero) = Zero()
+  @eval $op{T<:Real}(::Zero, ::T, x::T) = x
+  @eval $op{T<:Real}(::T, ::Zero, x::T) = x
+end
 
 isodd(::Zero) = false
 iseven(::Zero) = true
