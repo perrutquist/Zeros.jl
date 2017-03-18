@@ -47,6 +47,9 @@ Z = Zero()
 @test muladd(Z,1,3) === 3
 @test fma(Z,Z,Z) === Z
 @test muladd(Z,Z,Z) === Z
+@test mod(Z, 3) === Z
+@test rem(Z, 3) === Z
+@test modf(Z) === (Z, Z)
 
 #Complex
 C = Complex(Z,Z)

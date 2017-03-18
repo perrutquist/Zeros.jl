@@ -1,6 +1,6 @@
 module Zeros
 
-import Base: +, -, *, /, <, >, <=, >=, fma, muladd,
+import Base: +, -, *, /, <, >, <=, >=, fma, muladd, mod, rem, modf,
      ldexp, copysign, flipsign, sign, round, floor, ceil, trunc,
      promote_rule, convert, show, significand, isodd, iseven
 
@@ -53,6 +53,7 @@ convert{T<:Number}(::Type{Zero}, x::T) = x==zero(T) ? Zero() : throw(InexactErro
 ldexp(::Zero, ::Integer) = Zero()
 copysign(::Zero,::Real) = Zero()
 flipsign(::Zero,::Real) = Zero()
+modf(::Zero) = (Zero(), Zero())
 
 # Alerady working due to default definitions:
 # ==, !=, abs, isinf, isnan, isinteger, isreal, isimag,
@@ -68,6 +69,10 @@ for op in [:fma :muladd]
   @eval $op(::Real, ::Zero, ::Zero) = Zero()
   @eval $op(::Zero, x::Real, y::Real) = convert(promote_type(typeof(x),typeof(y)),y)
   @eval $op(x::Real, ::Zero, y::Real) = convert(promote_type(typeof(x),typeof(y)),y)
+end
+
+for op in [:mod, :rem]
+  @eval $op(::Zero, ::Real) = Zero()
 end
 
 isodd(::Zero) = false
