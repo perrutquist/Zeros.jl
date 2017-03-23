@@ -78,7 +78,8 @@ end
 isodd(::Zero) = false
 iseven(::Zero) = true
 
-# Display Zero() slightly differenlty from 0, so that it can be spotted.
+# Display Zero() as `0̸` (unicode "zero with combining long solidus overlay")
+# so that it looks slightly different from `0`.
 show(io::IO, ::Zero) = print(io, "0̸")
 
 "Convert to Zero() if zero. (Use immediately before calling a function.)"
