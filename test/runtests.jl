@@ -64,7 +64,7 @@ C = Complex(Z,Z)
 @test Z*(2+3im) === C
 @test (2.0+3.0im)*Z === C
 @test Z/(2+3im) === C
-@test Float64(C) = 0.0
+@test Float64(C) == 0.0
 
 # testzero()
 @test testzero(3) === 3

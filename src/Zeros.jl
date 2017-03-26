@@ -17,7 +17,7 @@ promote_rule{T<:Number}(::Type{Complex{Zero}}, ::Type{T}) = T
 
 convert(::Type{Zero}, ::Zero) = Zero()
 convert{T<:Number}(::Type{T}, ::Zero) = zero(T)
-convert{T<:Number}(::Type{T}, ::Complex{Zero}) = zero(T)
+#convert{T<:Number}(::Type{T}, ::Complex{Zero}) = zero(T)
 convert{T<:Number}(::Type{Zero}, x::T) = x==zero(T) ? Zero() : throw(InexactError)
 
 # (Some of these rules do not handle Inf and NaN according to the IEEE spec.)
