@@ -16,8 +16,11 @@ Since the value of a `Zero` is known at compile-time, the complier might be able
 
 The `testzero` function can be used to change the type when a variable is equal to zero. For example `foo(testzero(a), b)` will call `foo(a,b)` if `a` is nonzero. But if `a` is zero, then it will call `foo(Zero(),b)` instead. The function `foo` will then be complied specifically for input of the type `Zero` and this might result in speed-ups that outweigh the cost of branching.
 
+
+### Use as a field in a struct
+
 Another use for the `Zero` type can be found in [DoubleDoubles.jl](https://github.com/perrutquist/DoubleDoubles.jl).
-It defines a `Double` type which has a `.hi` and a `.lo` field. The case where the `.lo` field is zero is common enough that a separate type `Single` is defined for this. Instead of a type with no `.lo` field, we create one where it is of the `Zero` type (and thus requires no storage).
+It defines a `Double` type which has a `.hi` and a `.lo` field. The case where the `.lo` field is zero is common enough that a separate type `Single` is defined for this. Instead of a type with no `.lo` field, we create one where it is of the `Zero` type (and thus requires no storage). The code in that module looks like this:
 ```
 abstract AbstractDouble{T} <: AbstractFloat
 immutable Double{T<:AbstractFloat} <: AbstractDouble{T}
@@ -29,5 +32,4 @@ immutable Single{T<:AbstractFloat} <: AbstractDouble{T}
     lo::Zero
 end
 ```
-With these type definitions, functions written for `AbstractDouble` work with
-either type, and terms that are multiplied with the `.lo` field of a `Single` are automatically cancelled.
+Since the two subtypes have the same fields we can write methods for the abstract type, and they will work with either concrete type.
