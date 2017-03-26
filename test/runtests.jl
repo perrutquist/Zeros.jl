@@ -61,6 +61,10 @@ C = Complex(Z,Z)
 @test (2+3im)+Z === 2+3im
 @test Z-(2+3im) === -2-3im
 @test (2+3im)-Z === 2+3im
+@test C*2 === C
+@test 2.0*C === C
+@test C+1 === 1+0im
+@test 1+C === 1+0im
 @test Z*(2+3im) === C
 @test (2.0+3.0im)*Z === C
 @test Z/(2+3im) === C
