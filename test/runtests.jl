@@ -4,6 +4,7 @@ using Base.Test
 
 # Real
 Z = Zero()
+@test Zero(0) === Z
 @test Z === Zero()
 @test Z == Z
 @test Z == 0
@@ -13,6 +14,7 @@ Z = Zero()
 @test +Z === Z
 @test 2*Z === Z
 @test 2.0*Z === Z
+@test Z*3 === Z
 @test Z/2 === Z
 @test Z-Z === Z
 @test Z+Z === Z
@@ -54,12 +56,15 @@ Z = Zero()
 #Complex
 C = Complex(Z,Z)
 @test Z*im === C
+@test im*Z === C
 @test Z+(2+3im) === 2+3im
 @test (2+3im)+Z === 2+3im
 @test Z-(2+3im) === -2-3im
 @test (2+3im)-Z === 2+3im
 @test Z*(2+3im) === C
+@test (2.0+3.0im)*Z === C
 @test Z/(2+3im) === C
+@test Float64(C) = 0.0
 
 # testzero()
 @test testzero(3) === 3
