@@ -5,12 +5,15 @@
 
 This module provides the datatype `Zero`. All instances of this datatype are identical, and represent the value zero. (The term "singular datatype" might be appropriate if it was not already used for another concept in julia.)
 
-`Zero` is a subtype of `Real`. The most common operations for real values, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` type to their return values.
-(Existing functions may require some modifications to work with the `Zero` type. In particular, type assertions might be too restrictive.)
+`Zero` is a subtype of `Real`. The most common operations for real values, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` type to their return values, ignoring IEEE 754 `Inf` and `NaN`. (For example, `Zero()*x` reduces to `Zero()` at compile-time. No runtime check is performed to see if `x` is `Inf` in which case the result should be `NaN`.)
+
+Existing functions may require some modifications to work with the `Zero` type. In particular, type assertions might be too restrictive.
 
 `Complex(Zero(),Zero())` can be used to represent a complex value equal to zero.
 
 Trying to convert a nonzero value to `Zero` will throw an `InexactError`.
+
+Attempting to divide by `Zero()` will throw a `DivideError` rather than returning `Inf` or `NaN`.
 
 Since the value of a `Zero` is known at compile-time, the complier might be able to make optimizations when functions are called with arguments of this type.
 

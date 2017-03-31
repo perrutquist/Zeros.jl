@@ -16,7 +16,7 @@ promote_rule{T<:Number}(::Type{Zero}, ::Type{T}) = T
 
 convert(::Type{Zero}, ::Zero) = Zero()
 convert{T<:Number}(::Type{T}, ::Zero) = zero(T)
-convert{T<:Number}(::Type{Zero}, x::T) = x==zero(T) ? Zero() : throw(InexactError)
+convert{T<:Number}(::Type{Zero}, x::T) = x==zero(T) ? Zero() : throw(InexactError())
 
 # (Some of these rules do not handle Inf and NaN according to the IEEE spec.)
 
@@ -42,6 +42,10 @@ convert{T<:Number}(::Type{Zero}, x::T) = x==zero(T) ? Zero() : throw(InexactErro
 
 /(::Zero,::Real) = Zero()
 /(::Zero,::Complex) = complexzero
+/(::Real, ::Zero) = throw(DivideError())
+/(::Complex, ::Zero) = throw(DivideError())
+/(::Real, ::Complex{Zero}) = throw(DivideError())
+/(::Complex, ::Complex{Zero}) = throw(DivideError())
 
 <(::Zero,::Zero) = false
 >(::Zero,::Zero) = false
