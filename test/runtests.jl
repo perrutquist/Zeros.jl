@@ -83,3 +83,7 @@ C = Complex(Z,Z)
 @test_throws DivideError (1.0+2.0im)/Z
 @test_throws DivideError 1.0/C
 @test_throws DivideError (1+2im)/C
+@test_throws DivideError Z/Z
+@test_throws DivideError Z/C
+@test_throws DivideError C/Z
+@test_throws DivideError C/C

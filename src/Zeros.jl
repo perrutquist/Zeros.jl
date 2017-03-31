@@ -44,6 +44,8 @@ convert{T<:Number}(::Type{Zero}, x::T) = x==zero(T) ? Zero() : throw(InexactErro
 /(::Zero,::Complex) = complexzero
 /(::Real, ::Zero) = throw(DivideError())
 /(::Complex, ::Zero) = throw(DivideError())
+/(::Zero, ::Zero) = throw(DivideError())
+/(::Zero, ::Complex{Zero}) = throw(DivideError())
 /(::Real, ::Complex{Zero}) = throw(DivideError())
 /(::Complex, ::Complex{Zero}) = throw(DivideError())
 

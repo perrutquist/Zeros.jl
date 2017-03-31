@@ -14,6 +14,7 @@ Existing functions may require some modifications to work with the `Zero` type. 
 Trying to convert a nonzero value to `Zero` will throw an `InexactError`.
 
 Attempting to divide by `Zero()` will throw a `DivideError` rather than returning `Inf` or `NaN`.
+A compile-time zero in the denominator is usually a sign that a piece of code needs to be re-written to work optimally.
 
 Since the value of a `Zero` is known at compile-time, the complier might be able to make optimizations when functions are called with arguments of this type.
 
