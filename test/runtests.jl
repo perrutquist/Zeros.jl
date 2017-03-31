@@ -69,6 +69,9 @@ C = Complex(Z,Z)
 @test (2.0+3.0im)*Z === C
 @test Z/(2+3im) === C
 @test Float64(C) == 0.0
+@test C+C === C
+@test C-C === C
+@test C*C === C
 
 # testzero()
 @test testzero(3) === 3
@@ -87,3 +90,7 @@ C = Complex(Z,Z)
 @test_throws DivideError Z/C
 @test_throws DivideError C/Z
 @test_throws DivideError C/C
+
+# Test `MyComplex` example type
+include("mycomplex_example.jl")
+@test MyImaginary(2)*MyImaginary(3) === MyReal(-6)
