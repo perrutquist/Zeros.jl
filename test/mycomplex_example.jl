@@ -23,6 +23,7 @@ MyReal{T<:Real}(re::T) = MyReal{T}(re, Zero())
 MyImaginary{T<:Real}(im::T) = MyImaginary{T}(Zero(), im)
 MyComplex(re::Real, im::Zero) = MyReal(re)
 MyComplex(re::Zero, im::Real) = MyImaginary(im)
+MyComplex(::Zero, ::Zero) = MyComplex{Zero}(Zero(), Zero()) # disambiguation
 
 *(x::MyAbstractComplex, y::MyAbstractComplex) =
     MyComplex(x.re*y.re - x.im*y.im, x.re*y.im + x.im*y.re)

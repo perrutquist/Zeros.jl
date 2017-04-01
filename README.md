@@ -51,11 +51,11 @@ MyReal{T<:Real}(re::T) = MyReal{T}(re, Zero())
 MyImaginary{T<:Real}(im::T) = MyImaginary{T}(Zero(), im)
 MyComplex(re::Real, im::Zero) = MyReal(re)
 MyComplex(re::Zero, im::Real) = MyImaginary(im)
+MyComplex(::Zero, ::Zero) = MyComplex{Zero}(Zero(), Zero()) # disambiguation
 ```
 It is worth noting that `Zero` does not require any storage, so `MyReal` and `MyImaginary` require half the storage of `MyComplex`.
 
-Having defined the three types to all have the same fields, we can now define functions and for all using the abstract type.
-For example, we can define multiplication as:
+Having defined the three types to all have the same fields, we can now define functions and for all using the abstract type. For example, we can define multiplication as:
 ```
 import Base.*
 *(x::MyAbstractComplex, y::MyAbstractComplex) =
