@@ -21,19 +21,56 @@ Since the value of a `Zero` is known at compile-time, the complier might be able
 The `testzero` function can be used to change the type when a variable is equal to zero. For example `foo(testzero(a), b)` will call `foo(a,b)` if `a` is nonzero. But if `a` is zero, then it will call `foo(Zero(),b)` instead. The function `foo` will then be complied specifically for input of the type `Zero` and this might result in speed-ups that outweigh the cost of branching.
 
 
-### Use as a field in a struct
+### Usage example: Complex numbers
+
+Julia already has complex numbers, of course, but writing code to handle them makes a good example, since the special cases of real numbers (i.e. complex numbers with imaginary part equal to zero) and imaginary numbers (real part equal to zero) are common enough that we might want to create special types for them.
+
+However, if we use three different classes for real, imaginary and complex numbers, then we need nine different methods to handle every combination of arguments to binary operator. (For example: real times imaginary, imaginary times complex, etc.) With the `Zero` type, we can define all of these at once. First we define the types:
+
+```
+using Zeros
+
+abstract type MyAbstractComplex{T<:Real} end
+
+immutable MyComplex{T<:Real} <: MyAbstractComplex{T}
+  re::T
+  im::T
+end
+
+immutable MyReal{T<:Real} <: MyAbstractComplex{T}
+  re::T
+  im::Zero
+end
+
+immutable MyImaginary{T<:Real} <: MyAbstractComplex{T}
+  re::Zero
+  im::T
+end
+
+MyReal{T<:Real}(re::T) = MyReal{T}(re, Zero())
+MyImaginary{T<:Real}(im::T) = MyImaginary{T}(Zero(), im)
+MyComplex(re::Real, im::Zero) = MyReal(re)
+MyComplex(re::Zero, im::Real) = MyImaginary(im)
+```
+It is worth noting that `Zero` does not require any storage, so `MyReal{T}` and `MyComplex{T}` require half the storage space of `MyComplex{T}`.
+
+Having defined the three types to all have the same fields, we can now define multiplication once and for all:
+```
+import Base.*
+*(x::MyAbstractComplex, y::MyAbstractComplex) =
+    MyComplex(x.re*y.re - x.im*y.im, x.re*y.im + x.im*y.re)
+```
+
+This defines multiplication for all combinations of `MyReal`, `MyImaginary` and `MyComplex`.
+For example, we can try multiplying two purely imaginary numbers:
+```
+julia> MyImaginary(2)*MyImaginary(3)
+MyReal{Int64}(-6, 0̸)
+```
+Through the magic of type inference, julia has figured out that imaginary times imaginary equals real,
+and the result is computed just as efficiently as if we had hand-coded `*(a::MyImaginary, b::MyImaginary)`.
+
+### Another example
 
 Another use for the `Zero` type can be found in [DoubleDoubles.jl](https://github.com/perrutquist/DoubleDoubles.jl).
-It defines a `Double` type which has a `.hi` and a `.lo` field. The case where the `.lo` field is zero is common enough that a separate type `Single` is defined for this. Instead of a type with no `.lo` field, we create one where it is of the `Zero` type (and thus requires no storage). The code in that module looks like this:
-```
-abstract AbstractDouble{T} <: AbstractFloat
-immutable Double{T<:AbstractFloat} <: AbstractDouble{T}
-    hi::T
-    lo::T
-end
-immutable Single{T<:AbstractFloat} <: AbstractDouble{T}
-    hi::T
-    lo::Zero
-end
-```
-Since the two subtypes have the same fields we can write methods for the abstract type, and they will work with either concrete type.
+It defines a `Double` type which has a `.hi` and a `.lo` field. The case where the `.lo` field is zero is common enough that a separate type `Single` is defined for this. Instead of a type with no `.lo` field, we create one where it is of the `Zero` type (and thus requires no storage).
