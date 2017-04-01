@@ -25,7 +25,7 @@ The `testzero` function can be used to change the type when a variable is equal 
 
 Julia already has complex numbers, of course, but writing code to handle them makes a good example, since the special cases of real numbers (i.e. complex numbers with imaginary part equal to zero) and imaginary numbers (real part equal to zero) are common enough that we might want to create special types for them.
 
-However, if we use three different classes for real, imaginary and complex numbers, then we need nine different methods to handle every combination of arguments to binary operator. (For example: real times imaginary, imaginary times complex, etc.) With the `Zero` type, we can define all of these at once. First we define the types:
+If we use three different classes for real, imaginary and complex numbers, then we need nine different methods to handle every combination of arguments to binary operator. (For example: real times imaginary, imaginary times complex, etc.) With the `Zero` type, we can define all of these at once. First we define the types and constructors:
 
 ```
 using Zeros
@@ -52,17 +52,17 @@ MyImaginary{T<:Real}(im::T) = MyImaginary{T}(Zero(), im)
 MyComplex(re::Real, im::Zero) = MyReal(re)
 MyComplex(re::Zero, im::Real) = MyImaginary(im)
 ```
-It is worth noting that `Zero` does not require any storage, so `MyReal{T}` and `MyComplex{T}` require half the storage space of `MyComplex{T}`.
+It is worth noting that `Zero` does not require any storage, so `MyReal` and `MyImaginary` require half the storage of `MyComplex`.
 
-Having defined the three types to all have the same fields, we can now define multiplication once and for all:
+Having defined the three types to all have the same fields, we can now define functions and for all using the abstract type.
+For example, we can define multiplication as:
 ```
 import Base.*
 *(x::MyAbstractComplex, y::MyAbstractComplex) =
     MyComplex(x.re*y.re - x.im*y.im, x.re*y.im + x.im*y.re)
 ```
-
 This defines multiplication for all combinations of `MyReal`, `MyImaginary` and `MyComplex`.
-For example, we can try multiplying two purely imaginary numbers:
+We can now try multiplying two purely imaginary numbers:
 ```
 julia> MyImaginary(2)*MyImaginary(3)
 MyReal{Int64}(-6, 0̸)
