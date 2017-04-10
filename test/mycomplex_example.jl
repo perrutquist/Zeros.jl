@@ -2,7 +2,8 @@ using Zeros
 
 import Base.*
 
-abstract type MyAbstractComplex{T<:Real} end
+# abstract type MyAbstractComplex{T<:Real} end #v0.6
+abstract MyAbstractComplex{T<:Real}
 
 immutable MyComplex{T<:Real} <: MyAbstractComplex{T}
   re::T
