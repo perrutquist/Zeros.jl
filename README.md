@@ -3,9 +3,9 @@
 [![Build Status](https://travis-ci.org/perrutquist/Zeros.jl.svg?branch=master)](https://travis-ci.org/perrutquist/Zeros.jl)
 [![codecov.io](http://codecov.io/github/perrutquist/Zeros.jl/coverage.svg?branch=master)](http://codecov.io/github/perrutquist/Zeros.jl?branch=master)
 
-This module provides the datatype `Zero`. All instances of this datatype are identical, and represent the value zero. (The term "singular datatype" might be appropriate if it was not already used for another concept in julia.)
+This module provides a singular datatype named `Zero`. All instances of this datatype are identical, and represent the value zero.
 
-`Zero` is a subtype of `Real`. The most common operations for real values, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` type to their return values, ignoring IEEE 754 `Inf` and `NaN`. (For example, `Zero()*x` reduces to `Zero()` at compile-time. No runtime check is performed to see if `x` is `Inf` in which case the result should be `NaN`.)
+`Zero` is a subtype of `Real`. The most common operations for real values, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` type to their return values in a way that is correct for real numbers, but not for IEEE 754 `Inf` and `NaN`. (For example, `Zero()*x` reduces to `Zero()` at compile-time.)
 
 Existing functions may require some modifications to work with the `Zero` type. In particular, type assertions might be too restrictive.
 
@@ -16,7 +16,7 @@ Trying to convert a nonzero value to `Zero` will throw an `InexactError`.
 Attempting to divide by `Zero()` will throw a `DivideError` rather than returning `Inf` or `NaN`.
 A compile-time zero in the denominator is usually a sign that a piece of code needs to be re-written to work optimally.
 
-Since the value of a `Zero` is known at compile-time, the complier might be able to make optimizations when functions are called with arguments of this type.
+Since the value of a `Zero` is known at compile-time, the complier might be able to make optimizations when functions are called with arguments of this type. This is similar to using `@fastmath`, but it works even when functions are not inlined.
 
 The `testzero` function can be used to change the type when a variable is equal to zero. For example `foo(testzero(a), b)` will call `foo(a,b)` if `a` is nonzero. But if `a` is zero, then it will call `foo(Zero(),b)` instead. The function `foo` will then be complied specifically for input of the type `Zero` and this might result in speed-ups that outweigh the cost of branching.
 
