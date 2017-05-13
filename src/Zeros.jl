@@ -93,8 +93,14 @@ testzero(x::Complex) = x==zero(x) ? Complex(Zero(),Zero()) : x
 
 "Fill an array with zeros."
 zero!{T<:Real}(a::Array{T}) = fill!(a, Zero())
-# TODO: Make complex as fast (per byte) as real!
-zero!{T<:Complex}(a::Array{T}) = fill!(a, complexzero)
+function  zero!{T<:Real}(a::Array{Complex{T}})
+  if isbits(T)
+    fill!(reinterpret(T,a), Zero()) # Faster on jula 0.6.0-rc1
+  else
+    fill!(a, complexzero) # default method
+  end
+  return a
+end
 
 # Map scale! to zero! because some impelmentations converts the argument early.
 scale!{T<:Real}(a::Array{T}, ::Zero) = zero!(a)

@@ -79,25 +79,24 @@ C = Complex(Z,Z)
 @test testzero(0) === Z
 @test testzero(0+0im) === C
 
-<<<<<<< HEAD
 # Array functions
-for C in [(T)->T, (T)->Complex{T}]
+for cf in [(T)->T, (T)->Complex{T}]
   for T in [UInt8, UInt16, UInt32, UInt64, UInt128, Int8, Int16, Int32, Int64, Int128, BigInt, Float16, Float32, Float64, BigFloat]
-    A = ones(C(T),10)
+    A = ones(cf(T),10)
     @test zero!(A) === A
     @test all(A .== zero(T))
 
-    A .= one(C(T))
+    A .= one(cf(T))
     @test scale!(Zero(), A) === A
     @test all(A .== zero(T))
 
-    A .= one(C(T))
+    A .= one(cf(T))
     @test scale!(A, Zero()) === A
     @test all(A .== zero(T))
   end
 end
-=======
-# Test error handlign
+
+# Test error handling
 @test_throws InexactError Zero(1)
 @test_throws InexactError convert(Zero, 0.1)
 @test_throws DivideError 1.0/Z
@@ -112,4 +111,3 @@ end
 # Test `MyComplex` example type
 include("mycomplex_example.jl")
 @test MyImaginary(2)*MyImaginary(3) === MyReal(-6)
->>>>>>> d8893212dea5b8abe70fe09084213e2f9938a7d4
