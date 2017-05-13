@@ -93,13 +93,12 @@ testzero(x::Complex) = x==zero(x) ? Complex(Zero(),Zero()) : x
 
 "Fill an array with zeros."
 zero!{T<:Real}(a::Array{T}) = fill!(a, Zero())
-function  zero!{T<:Real}(a::Array{Complex{T}})
+@generated function zero!{T<:Real}(a::Array{Complex{T}})
   if isbits(T)
-    fill!(reinterpret(T,a), Zero()) # Faster on jula 0.6.0-rc1
+    :( fill!(reinterpret(T,a), Zero()); return a )# Faster on jula 0.6.0-rc1
   else
-    fill!(a, complexzero) # default method
+    :( fill!(a, complexzero); return a ) # default method
   end
-  return a
 end
 
 # Map scale! to zero! because some impelmentations converts the argument early.
