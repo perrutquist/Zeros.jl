@@ -7,7 +7,7 @@ This module provides a singular datatype named `Zero`. All instances of this dat
 
 `Zero` is a subtype of `Real`. The most common operations for real values, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` type to their return values in a way that is correct for real numbers, but not for IEEE 754 `Inf` and `NaN`. For example, `Zero()*x` reduces to `Zero()` at compile-time. This is similar to using `@fastmath`, but it works even when functions are not inlined.
 
-Since the value of a `Zero` is known at compile-time, the complier might be able to make optimizations when functions are called with arguments of this type. For example, in Julia 0.6.0-rc1.0, filling a `Float64` array with zeroes using `A .= Zero()` is twice as fast as `A .= 0.0` one some systems. This is because the `fill!` function gets re-compiled with the constant `Float64(0)`, and the compiler recognizes that it consists of four identical bytes, and the whole operation can be performed with a `llvm.memset` instead of an explicit loop.
+Since the value of a `Zero` is known at compile-time, the complier might be able to make optimizations when functions are called with arguments of this type. For example, in Julia 0.6.0-rc1.0, filling a `Float64` array with zeroes using `A .= Zero()` is twice as fast as `A .= 0.0` one some systems. This is because the `fill!` function gets re-compiled with the constant `0.0`, and the compiler recognizes that this constant consists of four identical bytes, so the whole operation can be performed with a `llvm.memset` instead of an explicit loop.
 
 `Complex(Zero(),Zero())` can be used to represent a complex value equal to zero.
 
