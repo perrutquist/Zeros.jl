@@ -2,9 +2,9 @@ module Zeros
 
 import Base: +, -, *, /, <, >, <=, >=, fma, muladd, mod, rem, modf,
      ldexp, copysign, flipsign, sign, round, floor, ceil, trunc,
-     promote_rule, convert, show, significand, isodd, iseven
+     promote_rule, convert, show, significand, isodd, iseven, scale!
 
-export Zero, testzero
+export Zero, testzero, zero!
 
  "A type that stores no data, and holds the value zero."
 immutable Zero <: Real
@@ -84,5 +84,17 @@ show(io::IO, ::Zero) = print(io, "0̸")
 # This function is intentionally not type-stable.
 testzero(x::Real) = x==zero(x) ? Zero() : x
 testzero(x::Complex) = x==zero(x) ? Complex(Zero(),Zero()) : x
+
+"Fill an array with zeros."
+zero!{T<:Real}(a::Array{T}) = fill!(a, Zero())
+zero!{T<:Complex}(a::Array{T}) = fill!(a, complexzero)
+
+# Map scale! to zero! because some impelmentations converts the argument early.
+scale!{T<:Real}(a::Array{T}, ::Zero) = zero!(a)
+scale!{T<:Real}(::Zero, a::Array{T}) = zero!(a)
+scale!{T<:BLAS.BlasFloat}(a::Array{T}, ::Zero) = zero!(a)
+scale!{T<:BLAS.BlasFloat}(::Zero, a::Array{T}) = zero!(a)
+scale!{T<:BLAS.BlasComplex}(a::Array{T}, ::Zero) = zero!(a)
+scale!{T<:BLAS.BlasComplex}(::Zero, a::Array{T}) = zero!(a)
 
 end # module

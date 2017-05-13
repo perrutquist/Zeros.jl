@@ -6,16 +6,16 @@
 This module provides the datatype `Zero`. All instances of this datatype are identical, and represent the value zero. (The term "singular datatype" might be appropriate if it was not already used for another concept in julia.)
 
 `Zero` is a subtype of `Real`. The most common operations for real values, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` type to their return values.
-(Existing functions may require some modifications to work with the `Zero` type. In particular, type assertions might be too restrictive.)
 
 `Complex(Zero(),Zero())` can be used to represent a complex value equal to zero.
 
 Trying to convert a nonzero value to `Zero` will throw an `InexactError`.
 
-Since the value of a `Zero` is known at compile-time, the complier might be able to make optimizations when functions are called with arguments of this type.
+Since the value of a `Zero` is known at compile-time, the complier might be able to make optimizations when functions are called with arguments of this type. For example, in Julia 0.6.0-rc1.0, filling a `Float64` array with zeroes using `A .= Zero()` is twice as fast as `A .= 0.0` one some systems. This is because the `fill!` function gets re-compiled with the constant `Float64(0)`, and the compiler recognizes that it consists of four identical bytes, and the whole operation can be performed with a `llvm.memset` instead of an explicit loop.
+
+The function `zero!(A)` can be used as an alias for `fill(A, Zero())` to quickly fill a real or complex array with zeros.
 
 The `testzero` function can be used to change the type when a variable is equal to zero. For example `foo(testzero(a), b)` will call `foo(a,b)` if `a` is nonzero. But if `a` is zero, then it will call `foo(Zero(),b)` instead. The function `foo` will then be complied specifically for input of the type `Zero` and this might result in speed-ups that outweigh the cost of branching.
-
 
 ### Use as a field in a struct
 
@@ -33,3 +33,5 @@ immutable Single{T<:AbstractFloat} <: AbstractDouble{T}
 end
 ```
 Since the two subtypes have the same fields we can write methods for the abstract type, and they will work with either concrete type.
+
+(Existing functions may require some modifications to work with the `Zero` type. In particular, type assertions might be too restrictive.)
