@@ -69,6 +69,9 @@ C = Complex(Z,Z)
 @test (2.0+3.0im)*Z === C
 @test Z/(2+3im) === C
 @test Float64(C) == 0.0
+@test C+C === C
+@test C-C === C
+@test C*C === C
 
 # testzero()
 @test testzero(3) === 3
@@ -76,6 +79,7 @@ C = Complex(Z,Z)
 @test testzero(0) === Z
 @test testzero(0+0im) === C
 
+<<<<<<< HEAD
 # Array functions
 for C in [(T)->T, (T)->Complex{T}]
   for T in [UInt8, UInt16, UInt32, UInt64, UInt128, Int8, Int16, Int32, Int64, Int128, BigInt, Float16, Float32, Float64, BigFloat]
@@ -92,3 +96,20 @@ for C in [(T)->T, (T)->Complex{T}]
     @test all(A .== zero(T))
   end
 end
+=======
+# Test error handlign
+@test_throws InexactError Zero(1)
+@test_throws InexactError convert(Zero, 0.1)
+@test_throws DivideError 1.0/Z
+@test_throws DivideError (1.0+2.0im)/Z
+@test_throws DivideError 1.0/C
+@test_throws DivideError (1+2im)/C
+@test_throws DivideError Z/Z
+@test_throws DivideError Z/C
+@test_throws DivideError C/Z
+@test_throws DivideError C/C
+
+# Test `MyComplex` example type
+include("mycomplex_example.jl")
+@test MyImaginary(2)*MyImaginary(3) === MyReal(-6)
+>>>>>>> d8893212dea5b8abe70fe09084213e2f9938a7d4
