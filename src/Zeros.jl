@@ -95,7 +95,7 @@ testzero(x::Complex) = x==zero(x) ? Complex(Zero(),Zero()) : x
 zero!{T<:Real}(a::Array{T}) = fill!(a, Zero())
 @generated function zero!{T<:Real}(a::Array{Complex{T}})
   if isbits(T)
-    :( fill!(reinterpret(T,a), Zero()); return a )# Faster on jula 0.6.0-rc1
+    :( zero!(reinterpret(T,a)); return a )# Faster on jula 0.6.0-rc1
   else
     :( fill!(a, complexzero); return a ) # default method
   end
