@@ -18,7 +18,7 @@ A compile-time zero in the denominator is usually a sign that a piece of code ne
 
 The `testzero` function can be used to change the type when a variable is equal to zero. For example `foo(testzero(a), b)` will call `foo(a,b)` if `a` is nonzero. But if `a` is zero, then it will call `foo(Zero(),b)` instead. The function `foo` will then be complied specifically for input of the type `Zero` and this might result in speed-ups that outweigh the cost of branching.
 
-The function `zero!(A)` can be used as an alias for `fill(A, Zero())` to quickly fill a real or complex array with zeros.
+The function `zero!(A)` can be used as an alias for `fill!(A, Zero())` to quickly fill a real or complex array with zeros.
 
 ### Usage example: Complex numbers
 
