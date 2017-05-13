@@ -84,15 +84,23 @@ for cf in [(T)->T, (T)->Complex{T}]
   for T in [UInt8, UInt16, UInt32, UInt64, UInt128, Int8, Int16, Int32, Int64, Int128, BigInt, Float16, Float32, Float64, BigFloat]
     A = ones(cf(T),10)
     @test zero!(A) === A
-    @test all(A .== zero(T))
+    @test all(A .== zero(cf(T)))
 
     A .= one(cf(T))
     @test scale!(Zero(), A) === A
-    @test all(A .== zero(T))
+    @test all(A .== zero(cf(T)))
 
     A .= one(cf(T))
     @test scale!(A, Zero()) === A
-    @test all(A .== zero(T))
+    @test all(A .== zero(cf(T)))
+
+    A .= one(cf(T))
+    @test scale!(C, A) === A
+    @test all(A .== zero(cf(T)))
+
+    A .= one(cf(T))
+    @test scale!(A, C) === A
+    @test all(A .== zero(cf(T)))
   end
 end
 
