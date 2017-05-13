@@ -10,13 +10,16 @@ export Zero, testzero, zero!
 immutable Zero <: Real
 end
 
-const complexzero = Complex(Zero(), Zero())
-
 promote_rule{T<:Number}(::Type{Zero}, ::Type{T}) = T
 
 convert(::Type{Zero}, ::Zero) = Zero()
 convert{T<:Number}(::Type{T}, ::Zero) = zero(T)
 convert{T<:Number}(::Type{Zero}, x::T) = x==zero(T) ? Zero() : throw(InexactError())
+
+const CZero = Complex{Zero}
+const RCZero = Union{Zero, CZero}
+
+const complexzero = CZero(Zero(), Zero())
 
 # (Some of these rules do not handle Inf and NaN according to the IEEE spec.)
 
@@ -40,14 +43,15 @@ convert{T<:Number}(::Type{Zero}, x::T) = x==zero(T) ? Zero() : throw(InexactErro
 *(::Zero, ::Complex{Bool}) = complexzero
 *(::Complex{Bool}, ::Zero) = complexzero
 
-/(::Zero,::Real) = Zero()
-/(::Zero,::Complex) = complexzero
-/(::Real, ::Zero) = throw(DivideError())
-/(::Complex, ::Zero) = throw(DivideError())
-/(::Zero, ::Zero) = throw(DivideError())
-/(::Zero, ::Complex{Zero}) = throw(DivideError())
-/(::Real, ::Complex{Zero}) = throw(DivideError())
-/(::Complex, ::Complex{Zero}) = throw(DivideError())
+/(::Zero, ::Real) = Zero()
+/(::RCZero, ::Complex) = complexzero
+/(::Real, ::RCZero) = throw(DivideError())
+/(::Complex, ::RCZero) = throw(DivideError())
+for T1 in [Zero, CZero]
+  for T2 in [Zero, CZero]
+    @eval /(::$T1, ::$T2) = throw(DivideError())
+  end
+end
 
 <(::Zero,::Zero) = false
 >(::Zero,::Zero) = false
@@ -95,20 +99,18 @@ testzero(x::Complex) = x==zero(x) ? Complex(Zero(),Zero()) : x
 zero!{T<:Real}(a::Array{T}) = fill!(a, Zero())
 @generated function zero!{T<:Real}(a::Array{Complex{T}})
   if isbits(T)
-    :( zero!(reinterpret(T,a)); return a )# Faster on jula 0.6.0-rc1
+    :( zero!(reinterpret(T,a)); return a ) # Faster on jula 0.6.0-rc1
   else
     :( fill!(a, complexzero); return a ) # default method
   end
 end
 
 # Map scale! to zero! because some impelmentations converts the argument early.
-scale!{T<:Real}(a::Array{T}, ::Zero) = zero!(a)
-scale!{T<:Real}(::Zero, a::Array{T}) = zero!(a)
-scale!{T<:BLAS.BlasFloat}(a::Array{T}, ::Zero) = zero!(a)
-scale!{T<:BLAS.BlasFloat}(::Zero, a::Array{T}) = zero!(a)
-scale!{T<:BLAS.BlasComplex}(a::Array{T}, ::Zero) = zero!(a)
-scale!{T<:BLAS.BlasComplex}(::Zero, a::Array{T}) = zero!(a)
-scale!{T<:BLAS.BlasComplex}(a::Array{T}, ::Complex{Zero}) = zero!(a)
-scale!{T<:BLAS.BlasComplex}(::Complex{Zero}, a::Array{T}) = zero!(a)
+scale!{T<:Real}(a::Array{T}, ::RCZero) = zero!(a)
+scale!{T<:Real}(::RCZero, a::Array{T}) = zero!(a)
+scale!{T<:BLAS.BlasFloat}(a::Array{T}, ::RCZero) = zero!(a)
+scale!{T<:BLAS.BlasFloat}(::RCZero, a::Array{T}) = zero!(a)
+scale!{T<:BLAS.BlasComplex}(a::Array{T}, ::RCZero) = zero!(a)
+scale!{T<:BLAS.BlasComplex}(::RCZero, a::Array{T}) = zero!(a)
 
 end # module
