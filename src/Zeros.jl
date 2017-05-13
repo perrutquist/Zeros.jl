@@ -105,7 +105,7 @@ zero!{T<:Real}(a::Array{T}) = fill!(a, Zero())
   end
 end
 
-# Map scale! to zero! because some impelmentations converts the argument early.
+# Map scale! to zero! because some impelmentations convert the argument early.
 scale!{T<:Real}(a::Array{T}, ::RCZero) = zero!(a)
 scale!{T<:Real}(::RCZero, a::Array{T}) = zero!(a)
 scale!{T<:BLAS.BlasFloat}(a::Array{T}, ::RCZero) = zero!(a)
