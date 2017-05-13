@@ -93,6 +93,7 @@ testzero(x::Complex) = x==zero(x) ? Complex(Zero(),Zero()) : x
 
 "Fill an array with zeros."
 zero!{T<:Real}(a::Array{T}) = fill!(a, Zero())
+# TODO: Make complex as fast (per byte) as real!
 zero!{T<:Complex}(a::Array{T}) = fill!(a, complexzero)
 
 # Map scale! to zero! because some impelmentations converts the argument early.
@@ -102,5 +103,7 @@ scale!{T<:BLAS.BlasFloat}(a::Array{T}, ::Zero) = zero!(a)
 scale!{T<:BLAS.BlasFloat}(::Zero, a::Array{T}) = zero!(a)
 scale!{T<:BLAS.BlasComplex}(a::Array{T}, ::Zero) = zero!(a)
 scale!{T<:BLAS.BlasComplex}(::Zero, a::Array{T}) = zero!(a)
+scale!{T<:BLAS.BlasComplex}(a::Array{T}, ::Complex{Zero}) = zero!(a)
+scale!{T<:BLAS.BlasComplex}(::Complex{Zero}, a::Array{T}) = zero!(a)
 
 end # module
