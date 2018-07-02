@@ -1,3 +1,4 @@
+__precompile__()
 module Zeros
 
 import Base: +, -, *, /, <, >, <=, >=, fma, muladd, mod, rem, modf,
