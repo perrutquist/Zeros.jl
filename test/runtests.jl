@@ -1,6 +1,5 @@
 using Zeros
-using Base.Test
-
+using Test
 
 # Real
 Z = Zero()
@@ -54,54 +53,36 @@ Z = Zero()
 @test modf(Z) === (Z, Z)
 
 #Complex
-C = Complex(Z,Z)
-@test Z*im === C
-@test im*Z === C
+@test Z*im === Z
+@test im*Z === Z
+@test real(Z) === Z
+@test imag(Z) === Z
 @test Z+(2+3im) === 2+3im
 @test (2+3im)+Z === 2+3im
 @test Z-(2+3im) === -2-3im
 @test (2+3im)-Z === 2+3im
-@test C*2 === C
-@test 2.0*C === C
-@test C+1 === 1+0im
-@test 1+C === 1+0im
-@test Z*(2+3im) === C
-@test (2.0+3.0im)*Z === C
-@test Z/(2+3im) === C
-@test Float64(C) == 0.0
-@test C+C === C
-@test C-C === C
-@test C*C === C
+@test Z*(2+3im) === Z
+@test (2.0+3.0im)*Z === Z
+@test Z/(2+3im) === Z
+
+@test Complex(Z,Z) == Z
+@test Complex(1,Z) == 1
+@test Complex(1.0,Z) == 1.0
+@test Complex(true,Z) == true
 
 # testzero()
 @test testzero(3) === 3
 @test testzero(3+3im) === 3+3im
 @test testzero(0) === Z
-@test testzero(0+0im) === C
+@test testzero(0+0im) === Z
 
 # Array functions
 for cf in [(T)->T, (T)->Complex{T}]
-  for T in [UInt8, UInt16, UInt32, UInt64, UInt128, Int8, Int16, Int32, Int64, Int128, BigInt, Float16, Float32, Float64, BigFloat]
-    A = ones(cf(T),10)
-    @test zero!(A) === A
-    @test all(A .== zero(cf(T)))
-
-    A .= one(cf(T))
-    @test scale!(Zero(), A) === A
-    @test all(A .== zero(cf(T)))
-
-    A .= one(cf(T))
-    @test scale!(A, Zero()) === A
-    @test all(A .== zero(cf(T)))
-
-    A .= one(cf(T))
-    @test scale!(C, A) === A
-    @test all(A .== zero(cf(T)))
-
-    A .= one(cf(T))
-    @test scale!(A, C) === A
-    @test all(A .== zero(cf(T)))
-  end
+    for T in [UInt8, UInt16, UInt32, UInt64, UInt128, Int8, Int16, Int32, Int64, Int128, BigInt, Float16, Float32, Float64, BigFloat]
+        A = ones(cf(T),10)
+        @test zero!(A) === A
+        @test all(A .== zero(cf(T)))
+    end
 end
 
 # Test error handling
@@ -109,12 +90,7 @@ end
 @test_throws InexactError convert(Zero, 0.1)
 @test_throws DivideError 1.0/Z
 @test_throws DivideError (1.0+2.0im)/Z
-@test_throws DivideError 1.0/C
-@test_throws DivideError (1+2im)/C
 @test_throws DivideError Z/Z
-@test_throws DivideError Z/C
-@test_throws DivideError C/Z
-@test_throws DivideError C/C
 
 # Test `MyComplex` example type
 include("mycomplex_example.jl")
