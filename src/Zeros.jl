@@ -12,7 +12,6 @@ export Zero, testzero, zero!
 struct Zero <: Integer
 end
 
-Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
 
 promote_rule(::Type{Zero}, ::Type{T}) where {T<:Number} = T
 promote_rule(::Type{Zero}, ::Type{Zero}) = Float64
@@ -20,6 +19,19 @@ promote_rule(::Type{Zero}, ::Type{Zero}) = Float64
 convert(::Type{Zero}, ::Zero) = Zero()
 convert(::Type{T}, ::Zero) where {T<:Number} = zero(T)
 convert(::Type{Zero}, x::T) where {T<:Number} = Zero(x)
+
+if VERSION < v"0.7-"
+    Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError())
+
+    # Disambiguation needed for Julia 0.6
+    convert(::Type{T}, ::Zero) where {T<:Real} = zero(T)
+    convert(::Type{BigInt}, ::Zero) = zero(BigInt)
+    convert(::Type{BigFloat}, ::Zero) = zero(BigFloat)
+    convert(::Type{Float16}, ::Zero) = zero(Float16)
+    convert(::Type{Complex{T}}, ::Zero) where {T<:Real} = zero(Complex{T})
+else
+    Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
+end
 
 AbstractFloat(::Zero) = 0.0
 

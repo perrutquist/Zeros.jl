@@ -1,5 +1,9 @@
 using Zeros
-using Test
+if VERSION < v"0.7-"
+    using Base.Test
+else
+    using Test
+end
 
 # Real
 Z = Zero()
