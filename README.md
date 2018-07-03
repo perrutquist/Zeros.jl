@@ -16,7 +16,7 @@ Attempting to divide by `Zero()` will throw a `DivideError` rather than returnin
 
 The `testzero` function can be used to change the type when a variable is equal to zero. For example `foo(testzero(a), b)` will call `foo(a,b)` if `a` is nonzero. But if `a` is zero, then it will call `foo(Zero(),b)` instead. The function `foo` will then be complied specifically for input of the type `Zero` and this might result in speed-ups that outweigh the cost of branching.
 
-New in v0.1: Attempting to create a `Complex` with `Zero()` as its real part will result in a `Real`, which will typically result in faster code execution. (For more advanced usage of `Zero` and complex numbers, see the example below.)
+New in v0.1: Attempting to create a `Complex` with `Zero()` as its imaginary part will result in a `Real`, which will typically result in faster code execution. (For more advanced usage of `Zero` and complex numbers, see the example below.)
 
 ### Usage example: Complex numbers
 
