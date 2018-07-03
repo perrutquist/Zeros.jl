@@ -4,7 +4,7 @@ module Zeros
 import Base: +, -, *, /, <, >, <=, >=, &, |, xor,
      fma, muladd, mod, rem, modf,
      ldexp, copysign, flipsign, sign, round, floor, ceil, trunc,
-     promote_rule, convert, show, significand, string, iszero, isone,
+     promote_rule, convert, show, significand, string,
      AbstractFloat, Integer, Complex
 
 export Zero, testzero, zero!, One, testone
@@ -20,8 +20,9 @@ end
 const TypeBool = Union{Zero, One}
 
 if VERSION < v"0.7-"
-    Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError())
-    One(x::Number) = isone(x) ? One() : throw(InexactError())
+    isone(x) = x==1
+    Zero(x::Number) = x==0 ? Zero() : throw(InexactError())
+    One(x::Number) = x==1 ? One() : throw(InexactError())
     convert(::Type{<:TypeBool}, x::TypeBool) = throw(InexactError())
 
     # Disambiguation needed for Julia 0.6
@@ -30,16 +31,22 @@ if VERSION < v"0.7-"
     convert(::Type{BigFloat}, ::Zero) = zero(BigFloat)
     convert(::Type{Float16}, ::Zero) = zero(Float16)
     convert(::Type{Complex{T}}, ::Zero) where {T<:Real} = zero(Complex{T})
+    convert(::Type{Complex{T}}, ::One) where {T<:Real} = one(Complex{T})
+    convert(::Type{Bool}, ::Zero) = false
+    convert(::Type{Bool}, ::One) = true
 else
     Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
     One(x::Number) = isone(x) ? One() : throw(InexactError(:One, One, x))
     convert(::Type{T}, x::TypeBool) where {T<:TypeBool} = throw(InexactError(:convert, T, x))
+    Base.isone(::Zero) = false
 end
+
+Base.iszero(::One) = false
 
 promote_rule(::Type{T}, ::Type{<:TypeBool}) where {T<:Number} = T
 promote_rule(::Type{T}, ::Type{<:TypeBool}) where {T<:Real} = T
 promote_rule(::Type{Complex{T}}, ::Type{<:TypeBool}) where {T<:Real} = Complex{T}
-promote_rule(::Type{Bool}, ::Type{<:TypeBool}) where {T<:Real} = Bool
+promote_rule(::Type{Bool}, ::Type{<:TypeBool}) = Bool
 promote_rule(::Type{<:TypeBool}, ::Type{<:TypeBool}) = Bool
 
 convert(::Type{Zero}, ::Zero) = Zero()
@@ -54,9 +61,6 @@ AbstractFloat(::Zero) = 0.0
 AbstractFloat(::One) = 1.0
 
 Complex(x::Real, ::Zero) = x
-
-isone(::Zero) = false
-iszero(::One) = false
 
 # Loop over types in order to make methods specific enough to avoid ambiguities.
 for T in (Number, Real, Integer, Complex, Complex{Bool})

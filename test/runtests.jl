@@ -1,6 +1,8 @@
 using Zeros
 if VERSION < v"0.7-"
+    # Julia 0.6
     using Base.Test
+    isone(x) = x==1
 else
     using Test
 end
