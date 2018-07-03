@@ -3,11 +3,11 @@
 [![Build Status](https://travis-ci.org/perrutquist/Zeros.jl.svg?branch=master)](https://travis-ci.org/perrutquist/Zeros.jl)
 [![codecov.io](http://codecov.io/github/perrutquist/Zeros.jl/coverage.svg?branch=master)](http://codecov.io/github/perrutquist/Zeros.jl?branch=master)
 
-This module provides a singular datatype named `Zero`. All instances of this datatype are identical, and represent the value zero.
+This module provides singular datatypes named `Zero` and `One`. All instances of each datatype are identical, and represent the values zero and one, respectively.
 
-`Zero` is a subtype of `Integer`. The most common operations, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` type to their return values in a way that is correct for real numbers, but not for IEEE 754 `Inf` and `NaN`. For example, `Zero()*x` reduces to `Zero()` at compile-time which has the effect that `Zero()*Inf` becomes `Zero()` rather than `NaN`. A value with this behaviour is sometimes referred to a "strong zero".
+`Zero` and `One` are subtypes of `Integer`. The most common operations, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` type to their return values in a way that is correct for numbers, but not for IEEE 754 `Inf` and `NaN`. For example, `Zero()*x` reduces to `Zero()` at compile-time which has the effect that `Zero()*Inf` becomes `Zero()` rather than `NaN`. A value with this behaviour is sometimes referred to a "strong zero".
 
-Since the value of a `Zero` is known at compile-time, the complier might be able to make optimisations when functions are called with arguments of this type. (Since Julia 0.7, literal constants are often propagated into functions at compile-time, and this can have a similar effect, but it might be hard to control which literals are propagated.)
+Since the value of a `Zero` or `One` is known at compile-time, the complier might be able to make optimisations when functions are called with arguments of these types. (Since Julia 0.7, literal constants are often propagated into functions at compile-time, and this can have a similar effect, but it might be hard to control which literals are propagated.)
 
 Trying to convert a nonzero value to `Zero` will throw an `InexactError`.
 
@@ -16,7 +16,7 @@ Attempting to divide by `Zero()` will throw a `DivideError` rather than returnin
 
 The `testzero` function can be used to change the type when a variable is equal to zero. For example `foo(testzero(a), b)` will call `foo(a,b)` if `a` is nonzero. But if `a` is zero, then it will call `foo(Zero(),b)` instead. The function `foo` will then be complied specifically for input of the type `Zero` and this might result in speed-ups that outweigh the cost of branching.
 
-New in v0.1: Attempting to create a `Complex` with `Zero()` as its imaginary part will result in a `Real`, which will typically result in faster code execution. (For more advanced usage of `Zero` and complex numbers, see the example below.)
+Attempting to create a `Complex` with `Zero()` as its imaginary part will result in a `Real`, which will typically result in faster code execution. (For more advanced usage of `Zero` and complex numbers, see the example below.)
 
 ### Usage example: Complex numbers
 

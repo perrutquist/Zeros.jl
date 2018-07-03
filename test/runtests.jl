@@ -7,16 +7,32 @@ end
 
 # Real
 Z = Zero()
+I = One()
+@test iszero(Z)
+@test isone(I)
+@test !isone(Z)
+@test !iszero(I)
 @test Zero(0) === Z
+@test One(1) === I
 @test Z === Zero()
+@test I === One()
 @test Z == Z
+@test I == I
 @test Z == 0
+@test I == 1
 @test sizeof(Z) == 0
 @test float(Z) === 0.0
+@test float(I) === 1.0
 @test -Z === Z
+@test -I === -1
 @test +Z === Z
+@test +I === I
 @test 2*Z === Z
+@test Z*Z === Z
+@test I*I === I
+@test 2*I === 2
 @test 2.0*Z === Z
+@test 2.0*I === 2.0
 @test Z*3 === Z
 @test Z/2 === Z
 @test Z-Z === Z
@@ -45,15 +61,21 @@ Z = Zero()
 @test significand(Z) === Z
 @test !isodd(Z)
 @test iseven(Z)
-@test string(Z) == "0̸"
+@test string(Z) == "𝟎"
 @test fma(Z,1,Z) === Z
+@test fma(Z,1.0,Z) === Z
 @test muladd(Z,1,Z) === Z
+@test muladd(Z,1.0,Z) === Z
 @test fma(Z,1,3) === 3
+@test fma(Z,1.0,3) === 3.0
 @test muladd(Z,1,3) === 3
+@test muladd(Z,1.0,3) === 3.0
 @test fma(Z,Z,Z) === Z
 @test muladd(Z,Z,Z) === Z
 @test mod(Z, 3) === Z
+@test mod(Z, 3.0) === Z
 @test rem(Z, 3) === Z
+@test rem(Z, 3.0) === Z
 @test modf(Z) === (Z, Z)
 
 #Complex
@@ -79,6 +101,27 @@ Z = Zero()
 @test testzero(3+3im) === 3+3im
 @test testzero(0) === Z
 @test testzero(0+0im) === Z
+
+# More mixed tests
+for i in (Z, I)
+    ii = convert(Complex{Float64}, i)
+    for j in (Z, I, 0, 1, 0.0, 1.0, 0+0im, 0.0+0im, im, 1+im, 1.0+im)
+        for op in (+, -, *)
+            println(i, op, j)
+            @test op(i,j) == op(ii, j)
+            println(j, op, i)
+            @test op(j,i) == op(j, ii)
+        end
+        if !iszero(j)
+            println(i, "/", j)
+            @test i/j == ii/j
+        end
+        if !iszero(i)
+            println(j, "/", i)
+            @test j/i == j/ii
+        end
+    end
+end
 
 # Array functions
 for cf in [(T)->T, (T)->Complex{T}]
