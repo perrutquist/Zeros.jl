@@ -78,25 +78,6 @@ for T in (Number, Real, Integer, Complex, Complex{Bool})
     #Base.:/(x::One, ::T) = inv(x)
 end
 
-#+(::Zero,::Zero) = Zero()
--(::Zero) = Zero()
-#-(::Zero,::Zero) = Zero()
-#*(::Zero,::Zero) = Zero()
-/(::Zero, ::Zero) = throw(DivideError())
--(::One) = -1
-#-(::One, ::One) = Zero()
-#*(::One, ::One) = One()
-/(::One, ::One) = One()
-
-# disambiguation
-#*(::Zero, ::One) = Zero()
-#*(::One, ::Zero) = Zero()
-/(::Zero, ::One) = Zero()
-/(::One, ::Zero) = throw(DivideError())
-
-<(::T,::T) where {T<:TypeBool} = false
-<=(::T,::T) where {T<:TypeBool} = true
-
 # These functions are intentionally not type-stable.
 "Convert to Zero() if equal to zero. (Use immediately before calling a function.)"
 testzero(x::Number) = iszero(x) ? Zero() : x
@@ -104,7 +85,7 @@ testzero(x::Number) = iszero(x) ? Zero() : x
 testone(x::Number) = isone(x) ? One() : x
 
 # This functions give a strange "of_sametype" error. (See int.jl)
-# Hence we overload all, even when result is not One() or Zero()
+# Hence we overload them all, even when result is not One() or Zero()
 for op in (:+, :-, :*, :&, :|, :xor)
     for (T1,x) in ((:Zero, 0), (:One, 1))
         for (T2,y) in ((:Zero, 0), (:One, 1))
@@ -115,6 +96,19 @@ for op in (:+, :-, :*, :&, :|, :xor)
         end
     end
 end
+
+-(::Zero) = Zero()
+-(::One) = -1
+
+/(::Zero, ::Zero) = throw(DivideError())
+/(::One, ::One) = One()
+
+# disambiguation
+/(::Zero, ::One) = Zero()
+/(::One, ::Zero) = throw(DivideError())
+
+<(::T,::T) where {T<:TypeBool} = false
+<=(::T,::T) where {T<:TypeBool} = true
 
 ldexp(::Zero, ::Integer) = Zero()
 copysign(::Zero,::Real) = Zero()
