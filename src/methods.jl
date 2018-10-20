@@ -20,8 +20,8 @@ end
 
 Base.:/(::Zero, ::Zero) = throw(DivideError()) # disambiguation
 
-#Base.:-(::Static{T}, ::Static{T}) where {T} = Zero()
-#Base.:/(::Static{T}, ::Static{T}) where {T} = One()
+Base.:-(::Static{T}, ::Static{T}) where {T} = Zero()
+Base.:/(::Static{T}, ::Static{T}) where {T} = One()
 
 ldexp(::Zero, ::Integer) = Zero()
 copysign(::Zero,::Real) = Zero()
@@ -55,7 +55,6 @@ end
 # Display Zero() as `0̸` (unicode "zero with combining long solidus overlay")
 # so that it looks slightly different from `0`.
 show(io::IO, ::Zero) = print(io, "0̸")
-string(z::Zero) = Base.print_to_string(z)
 
 # Display Array{Zero} without printing the actual zeros.
 show(io::IO, x::Array{Zero,N}) where {N} = show(io, MIME"text/plain", x)
