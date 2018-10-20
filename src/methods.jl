@@ -1,12 +1,8 @@
 import Base: +, -, *, /, <, >, <=, >=, fma, muladd, mod, rem, modf,
      ldexp, copysign, flipsign, sign, round, floor, ceil, trunc,
      promote_rule, convert, show, significand, string,
-     AbstractFloat, Integer, Complex, real, imag
-
-
-Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
-
-AbstractFloat(::Zero) = 0.0
+     Integer, Complex, real, imag,
+     log, exp, sin, cos, tan, sinpi, cospi
 
 Complex(x::Real, ::Zero) = x
 
@@ -23,6 +19,9 @@ for T in (Number, Real, Integer, Complex, Complex{Bool})
 end
 
 Base.:/(::Zero, ::Zero) = throw(DivideError()) # disambiguation
+
+#Base.:-(::Static{T}, ::Static{T}) where {T} = Zero()
+#Base.:/(::Static{T}, ::Static{T}) where {T} = One()
 
 ldexp(::Zero, ::Integer) = Zero()
 copysign(::Zero,::Real) = Zero()

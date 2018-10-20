@@ -8,6 +8,8 @@
 imag(::Zero) = Zero()
 imag(::MinusOne) = Zero()
 imag(::One) = Zero()
+log(::One) = Zero()
+exp(::Zero) = One()
 sin(::Zero) = Zero()
 cos(::Zero) = One()
 tan(::Zero) = Zero()
