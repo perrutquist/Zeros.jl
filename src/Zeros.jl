@@ -5,6 +5,15 @@ using StaticNumbers
 
 export Zero, testzero, One, testone, MinusOne, testminusone, zero!
 
+"A type that stores no data, and holds the value zero."
+const Zero = StaticInteger{0}
+
+"A type that stores no data, and holds the value one."
+const One = StaticInteger{1}
+
+"A type that stores no data, and holds the value minus one."
+const MinusOne = StaticInteger{-1}
+
 # Adding methods to functions in base
 include("methods.jl")
 

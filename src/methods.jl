@@ -4,15 +4,6 @@ import Base: +, -, *, /, <, >, <=, >=, fma, muladd, mod, rem, modf,
      AbstractFloat, Integer, Complex, real, imag
 
 
-"A type that stores no data, and holds the value zero."
-const Zero = StaticInteger{0}
-
-"A type that stores no data, and holds the value one."
-const One = StaticInteger{1}
-
-"A type that stores no data, and holds the value minus one."
-const MinusOne = StaticInteger{-1}
-
 Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
 
 AbstractFloat(::Zero) = 0.0
