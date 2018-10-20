@@ -1,41 +1,30 @@
 __precompile__()
 module Zeros
 
+using StaticNumbers
+
 import Base: +, -, *, /, <, >, <=, >=, fma, muladd, mod, rem, modf,
      ldexp, copysign, flipsign, sign, round, floor, ceil, trunc,
-     promote_rule, convert, show, significand, string
-     AbstractFloat, Integer, Complex
+     promote_rule, convert, show, significand, string,
+     AbstractFloat, Integer, Complex, real, imag
 
 export Zero, testzero, zero!
 
- "A type that stores no data, and holds the value zero."
-struct Zero <: Integer
-end
+"A type that stores no data, and holds the value zero."
+const Zero = StaticInteger{0}
+"A type that stores no data, and holds the value one."
+const One = StaticInteger{1}
+"A type that stores no data, and holds the value minus one."
+const MinusOne = StaticInteger{-1}
 
-
-promote_rule(::Type{Zero}, ::Type{T}) where {T<:Number} = T
-promote_rule(::Type{Zero}, ::Type{Zero}) = Float64
-
-convert(::Type{Zero}, ::Zero) = Zero()
-convert(::Type{T}, ::Zero) where {T<:Number} = zero(T)
-convert(::Type{Zero}, x::T) where {T<:Number} = Zero(x)
-
-if VERSION < v"0.7-"
-    Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError())
-
-    # Disambiguation needed for Julia 0.6
-    convert(::Type{T}, ::Zero) where {T<:Real} = zero(T)
-    convert(::Type{BigInt}, ::Zero) = zero(BigInt)
-    convert(::Type{BigFloat}, ::Zero) = zero(BigFloat)
-    convert(::Type{Float16}, ::Zero) = zero(Float16)
-    convert(::Type{Complex{T}}, ::Zero) where {T<:Real} = zero(Complex{T})
-else
-    Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
-end
+Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
 
 AbstractFloat(::Zero) = 0.0
 
 Complex(x::Real, ::Zero) = x
+
+# Methods involving only the above-defined constants.
+include("generated.jl")
 
 # Loop over types in order to make methods specific enough to avoid ambiguities.
 for T in (Number, Real, Integer, Complex, Complex{Bool})
@@ -49,13 +38,7 @@ for T in (Number, Real, Integer, Complex, Complex{Bool})
     Base.:/(::T, ::Zero) = throw(DivideError())
 end
 
-+(::Zero,::Zero) = Zero()
--(::Zero,::Zero) = Zero()
-*(::Zero,::Zero) = Zero()
-/(::Zero, ::Zero) = throw(DivideError())
-
-<(::Zero,::Zero) = false
-<=(::Zero,::Zero) = true
+Base.:/(::Zero, ::Zero) = throw(DivideError()) # disambiguation
 
 ldexp(::Zero, ::Integer) = Zero()
 copysign(::Zero,::Real) = Zero()
@@ -66,8 +49,8 @@ modf(::Zero) = (Zero(), Zero())
 # ==, !=, abs, isinf, isnan, isinteger, isreal, isimag,
 # signed, unsigned, float, big, complex, isodd, iseven
 
-for op in [:(-), :sign, :round, :floor, :ceil, :trunc, :significand]
-  @eval $op(::Zero) = Zero()
+for op in [:round, :floor, :ceil, :trunc, :significand], T in (:Zero, :One, :MinusOne)
+  @eval $op(::$T) = $T()
 end
 
 # Avoid promotion of triplets
