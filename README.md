@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/perrutquist/Zeros.jl.svg?branch=master)](https://travis-ci.org/perrutquist/Zeros.jl)
 [![codecov.io](http://codecov.io/github/perrutquist/Zeros.jl/coverage.svg?branch=master)](http://codecov.io/github/perrutquist/Zeros.jl?branch=master)
 
-This module provides singular datatypes named Zero and One. All instances of each datatype are identical, and represent the values zero and one, respectively.
+This module provides singular datatypes named Zero and One. All instances of each datatype are identical, and represent the values zero and one, respectively. This is a light-weight alternative to [StaticNumbers.jl](https://github.com/perrutquist/StaticNumbers.jl) when only these two values are needed.
 
 `Zero` and `One` are subtypes of `Integer`. The most common operations, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` type to their return values in a way that is correct for numbers, but not for IEEE 754 `Inf` and `NaN`. For example, `Zero()*x` reduces to `Zero()` at compile-time which has the effect that `Zero()*Inf` becomes `Zero()` rather than `NaN`. A value with this behaviour is sometimes referred to a "strong zero".
 
