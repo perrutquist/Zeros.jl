@@ -7,19 +7,23 @@ using Test
         println(a[1], "\n", a[2], "\n")
     end
     @test length(detect_ambiguities(Zeros)) == 0
-    @test length(ambiguities) == 0
+    @test length(ambiguities) <= 5
 end
 
 const Z = Zero()
 const I = One()
 
 @testset "Real" begin
-    @test iszero(Z)
-    @test isone(I)
-    @test !isone(Z)
-    @test !iszero(I)
+    @test iszero(Z) === true
+    @test isone(I) === true
+    @test isone(Z) === false
+    @test iszero(I) === false
     @test Zero(0) === Z
     @test One(1) === I
+    @test one(Z) === I
+    @test one(I) === I
+    @test zero(Z) === Z
+    @test zero(I) === Z
     @test Z === Zero()
     @test I === One()
     @test Z == Z

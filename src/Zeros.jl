@@ -27,12 +27,8 @@ promote_rule(::Type{<:StaticBool}, ::Type{<:StaticBool}) = Bool
 convert(::Type{T}, ::Zero) where {T<:Number} = zero(T)
 convert(::Type{T}, ::One) where {T<:Number} = one(T)
 
-#convert(::Type{Zero}, x::T) where {T<:Number} = Zero(x)
-
 Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
 One(x::Number) = isone(x) ? One() : throw(InexactError(:One, One, x))
-
-#convert(::Type{T}, x::StaticBool) where {T<:StaticBool} = throw(InexactError(:convert, T, x))
 
 AbstractFloat(::Zero) = 0.0
 AbstractFloat(::One) = 1.0
@@ -129,5 +125,11 @@ show(io::IO, ::Zero) = print(io, "𝟎") # U+1D7CE
 show(io::IO, ::One) = print(io, "𝟏") # U+1D7CF
 
 string(z::StaticBool) = Base.print_to_string(z)
+
+if VERSION < v"1.2"
+    # Disambiguation needed for older Julia versions
+    copysign(::Zero, x::Unsigned) = Zero()
+    flipsign(::Zero, x::Unsigned) = Zero()
+end
 
 end # module
