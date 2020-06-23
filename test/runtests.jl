@@ -45,7 +45,7 @@ Z = Zero()
 @test significand(Z) === Z
 @test !isodd(Z)
 @test iseven(Z)
-@test Base.print_to_string(Z) == "0̸"
+@test string(Z) == "0̸"
 @test fma(Z,1,Z) === Z
 @test muladd(Z,1,Z) === Z
 @test fma(Z,1,3) === 3

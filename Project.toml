@@ -1,8 +1,0 @@
-name = "Zeros"
-uuid = "bd1ec220-6eb4-527a-9b49-e79c3db6233b"
-authors = ["Per Rutquist <per.rutquist@gmail.com>"]
-version = "0.2.0"
-
-[deps]
-StaticNumbers = "c5e4b96a-f99f-5557-8ed2-dc63ef9b5131"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
