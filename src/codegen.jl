@@ -1,8 +1,8 @@
 # This file generates the method definitions
 # stored in generated.jl
 
-# (This way avoids having to eval a lot of expressions as the package
-# is loaded, and makes the code easier to debug.)
+# (This way makes the code easier to debug. Most of the combinations tried
+# here don't result in a method definition.)
 
 # Do everything in a module, to avoid polluting the Main namespace
 module TemporaryCodegenModule
@@ -31,9 +31,9 @@ function fun1(f1, d)
     for f in f1, i in keys(d)
         r = nothing
         try
-            r = @eval $f($i)
+            r = f(i)
         catch
-            #println("# eval failed for $f($i)")
+            #println("# $f($i) threw an exception")
         end
         if r in keys(d)
             r1 = nothing
@@ -58,14 +58,14 @@ function fun2(f2, d)
     for f in f2, i in keys(d), j in keys(d)
         r = nothing
         try
-            r = @eval $f($i, $j)
+            r = f(i, j)
         catch
-            #println("# eval failed for $f($i, $j)")
+            #println("# $f($i, $j) threw and exception")
         end
         if r in keys(d)
             r1 = nothing
             try
-                r1 = @eval $f(static($i), static($j))
+                r1 = f(static(i), static(j))
             catch
                 nothing
             end

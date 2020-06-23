@@ -20,7 +20,7 @@ include("methods.jl")
 # Auto-generated methods
 include("generated.jl")
 
-# These function is intentionally not type-stable.
+# These functions are intentionally not type-stable.
 "Convert to Zero() if zero. (Use immediately before calling a function.)"
 testzero(x::Number) = x==zero(x) ? Zero() : x
 "Convert to One() if one. (Use immediately before calling a function.)"
