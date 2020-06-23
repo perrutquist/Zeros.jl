@@ -18,13 +18,11 @@ end
 
 const StaticBool = Union{Zero, One}
 
-promote_rule(::Type{T}, ::Type{<:StaticBool}) where {T<:Number} = T
-promote_rule(::Type{T}, ::Type{<:StaticBool}) where {T<:Real} = T
-promote_rule(::Type{Complex{T}}, ::Type{<:StaticBool}) where {T<:Real} = Complex{T}
-promote_rule(::Type{Bool}, ::Type{<:StaticBool}) = Bool
+promote_rule(::Type{<:StaticBool}, ::Type{T}) where {T<:Number} = T
+promote_rule(::Type{<:StaticBool}, ::Type{T}) where {T<:Real} = T
+promote_rule(::Type{<:StaticBool}, ::Type{Complex{T}}) where {T<:Real} = Complex{T}
+promote_rule(::Type{<:StaticBool}, ::Type{Bool}) = Bool
 promote_rule(::Type{<:StaticBool}, ::Type{<:StaticBool}) = Bool
-
-convert(::Type{T}, x::T) where {T<:StaticBool} = x
 
 convert(::Type{T}, ::Zero) where {T<:Number} = zero(T)
 convert(::Type{T}, ::One) where {T<:Number} = one(T)
@@ -33,7 +31,8 @@ convert(::Type{T}, ::One) where {T<:Number} = one(T)
 
 Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
 One(x::Number) = isone(x) ? One() : throw(InexactError(:One, One, x))
-convert(::Type{T}, x::StaticBool) where {T<:StaticBool} = throw(InexactError(:convert, T, x))
+
+#convert(::Type{T}, x::StaticBool) where {T<:StaticBool} = throw(InexactError(:convert, T, x))
 
 AbstractFloat(::Zero) = 0.0
 AbstractFloat(::One) = 1.0
@@ -83,6 +82,10 @@ end
 /(::Zero, ::Zero) = throw(DivideError())
 /(::One, ::One) = One()
 
+# Disambig
+/(::One, ::Zero) = throw(DivideError())
+/(::Zero, ::One) = Zero()
+
 <(::T,::T) where {T<:StaticBool} = false
 <=(::T,::T) where {T<:StaticBool} = true
 
@@ -100,23 +103,25 @@ for op in [:sign, :round, :floor, :ceil, :trunc, :significand]
     @eval $op(::One) = One()
 end
 
-# Avoid promotion of triplets
-for op in [:fma :muladd]
-    @eval $op(::Zero, ::Zero, ::Zero) = Zero()
-    for T in (Real, Integer)
-        @eval $op(::Zero, ::$T, ::Zero) = Zero()
-        @eval $op(::$T, ::Zero, ::Zero) = Zero()
-        @eval $op(::Zero, x::$T, y::$T) = convert(promote_type(typeof(x),typeof(y)),y)
-        @eval $op(x::$T, ::Zero, y::$T) = convert(promote_type(typeof(x),typeof(y)),y)
-        @eval $op(x::$T, y::$T, ::Zero) = x*y
-        @eval $op(::One, x::$T, y::$T) = x+y
-        @eval $op(x::$T, ::One, y::$T) = x+y
-    end
-end
+# # Avoid promotion of triplets
+# for op in [:fma :muladd]
+#     @eval $op(::Zero, ::Zero, ::Zero) = Zero()
+#     for T in (Real, Integer)
+#         @eval $op(::Zero, ::$T, ::Zero) = Zero()
+#         @eval $op(::$T, ::Zero, ::Zero) = Zero()
+#         @eval $op(::Zero, x::$T, y::$T) = convert(promote_type(typeof(x),typeof(y)),y)
+#         @eval $op(x::$T, ::Zero, y::$T) = convert(promote_type(typeof(x),typeof(y)),y)
+#         @eval $op(x::$T, y::$T, ::Zero) = x*y
+#         @eval $op(::One, x::$T, y::$T) = x+y
+#         @eval $op(x::$T, ::One, y::$T) = x+y
+#     end
+# end
 
-for op in [:mod, :rem]
-  @eval $op(::Zero, ::Real) = Zero()
+for op in [:mod, :rem], T in (:Real, :Rational)
+  @eval $op(::Zero, ::$T) = Zero()
 end
+mod(::Zero, ::Zero) = throw(DivideError()) # disambig
+rem(::Zero, ::Zero) = throw(DivideError()) #
 
 # Display Zero() as `𝟎` ("mathematical bold digit zero")
 # so that it looks slightly different from `0` (and same for One()).
