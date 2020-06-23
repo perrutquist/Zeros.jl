@@ -4,5 +4,5 @@ authors = ["Per Rutquist <per.rutquist@gmail.com>"]
 version = "0.2.0"
 
 [deps]
-StaticNumbers = "72a81bbf-99bf-5aa3-901b-88f572a6e6f6"
+StaticNumbers = "c5e4b96a-f99f-5557-8ed2-dc63ef9b5131"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
