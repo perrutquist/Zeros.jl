@@ -99,6 +99,9 @@ const I = One()
     @test rem(Z, 3) === Z
     @test rem(Z, 3.0) === Z
     @test modf(Z) === (Z, Z)
+    @test I/I === I
+    @test 1.0/I === 1.0
+    @test 1/I === 1.0
 end
 
 # @testset "muladd" begin
