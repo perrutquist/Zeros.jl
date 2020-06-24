@@ -174,3 +174,16 @@ include("mycomplex_example.jl")
 @testset "mycomplex_example.jl" begin
     @test MyImaginary(2)*MyImaginary(3) === MyReal(-6)
 end
+
+Zeros.@pirate Base
+
+@testset "piracy" begin
+    @test +() === Z
+    @test *() === I
+    @test zero() === Z
+    @test one() === I
+    @test sum([]) == 0
+    @test prod([]) == 1
+    @test sin(π) == 0
+    @test tan(π) == 0
+end

@@ -42,7 +42,9 @@ AbstractFloat(::Zero) = 0.0
 AbstractFloat(::One) = 1.0
 
 zero(::StaticBool) = Zero()
+zero(::Type{<:StaticBool}) = Zero()
 one(::StaticBool) = One()
+one(::Type{<:StaticBool}) = One()
 
 Complex(x::Real, ::Zero) = x
 
@@ -159,6 +161,7 @@ string(z::StaticBool) = Base.print_to_string(z)
 
 Base.Checked.checked_abs(x::StaticBool) = x
 Base.Checked.checked_mul(x::StaticBool, y::StaticBool) = x*y
+Base.Checked.mul_with_overflow(x::StaticBool, y::StaticBool) = (x*y, false)
 Base.Checked.checked_add(x::StaticBool, y::StaticBool) = x+y
 
 if VERSION < v"1.2"
@@ -166,5 +169,7 @@ if VERSION < v"1.2"
     copysign(::Zero, x::Unsigned) = Zero()
     flipsign(::Zero, x::Unsigned) = Zero()
 end
+
+include("pirate.jl")
 
 end # module
