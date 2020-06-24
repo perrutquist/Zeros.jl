@@ -102,6 +102,20 @@ const I = One()
     @test I/I === I
     @test 1.0/I === 1.0
     @test 1/I === 1.0
+
+    @test log(I) == log(1)
+    @test exp(Z) == exp(0)
+    @test sin(Z) == sin(0)
+    @test cos(Z) == cos(0)
+    @test tan(Z) == tan(0)
+    @test asin(Z) == asin(0)
+    @test atan(Z) == atan(0)
+    @test sinpi(Z) == sinpi(0)
+    @test sinpi(I) == sinpi(1)
+    @test cospi(Z) == cospi(0)
+    @test sinh(Z) == sinh(0)
+    @test cosh(Z) == cosh(0)
+    @test tanh(Z) == tanh(0)
 end
 
 # @testset "muladd" begin

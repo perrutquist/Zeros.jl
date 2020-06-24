@@ -104,6 +104,20 @@ for op in [:sign, :round, :floor, :ceil, :trunc, :significand]
     @eval $op(::One) = One()
 end
 
+log(::One) = Zero()
+exp(::Zero) = One()
+sin(::Zero) = Zero()
+cos(::Zero) = One()
+tan(::Zero) = Zero()
+asin(::Zero) = Zero()
+atan(::Zero) = Zero()
+sinpi(::Zero) = Zero()
+sinpi(::One) = Zero()
+cospi(::Zero) = One()
+sinh(::Zero) = Zero()
+cosh(::Zero) = One()
+tanh(::Zero) = Zero()
+
 # # Avoid promotion of triplets
 # for op in [:fma :muladd]
 #     @eval $op(::Zero, ::Zero, ::Zero) = Zero()
