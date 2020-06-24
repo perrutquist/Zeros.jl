@@ -18,6 +18,16 @@ const I = One()
     @test isone(I) === true
     @test isone(Z) === false
     @test iszero(I) === false
+    @test Int(Z) === 0
+    @test Int(I) === 1
+    @test Float64(Z) === 0.0
+    @test Float64(I) === 1.0
+    @test float(Z) === 0.0
+    @test float(I) === 1.0
+    @test Z + 1 === 1
+    @test I + 1 === 2
+    @test Z + I === I
+    @test Z - I === -1
     @test Zero(0) === Z
     @test One(1) === I
     @test one(Z) === I
@@ -41,10 +51,13 @@ const I = One()
     @test Z*Z === Z
     @test I*I === I
     @test 2*I === 2
+    @test 2/I === 2.0
+    @test I*2 === 2
     @test 2.0*Z === Z
     @test 2.0*I === 2.0
     @test Z*3 === Z
     @test Z/2 === Z
+    @test Z/I === Z
     @test Z-Z === Z
     @test Z+Z === Z
     @test Z*Z === Z
@@ -69,9 +82,18 @@ const I = One()
     @test ceil(Z) === Z
     @test trunc(Z) === Z
     @test significand(Z) === Z
+    @test sign(I) === I
+    @test round(I) === I
+    @test floor(I) === I
+    @test ceil(I) === I
+    @test trunc(I) === I
+    @test significand(I) === I
     @test !isodd(Z)
     @test iseven(Z)
+    @test isodd(I)
+    @test !iseven(I)
     @test string(Z) == "𝟎"
+    @test string(I) == "𝟏"
     @test mod(Z, 3) === Z
     @test mod(Z, 3.0) === Z
     @test rem(Z, 3) === Z
@@ -124,6 +146,7 @@ end
     @test_throws DivideError 1.0/Z
     @test_throws DivideError (1.0+2.0im)/Z
     @test_throws DivideError Z/Z
+    @test_throws DivideError I/Z
 end
 
 # Test `MyComplex` example type

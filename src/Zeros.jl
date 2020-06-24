@@ -27,6 +27,9 @@ promote_rule(::Type{<:StaticBool}, ::Type{<:StaticBool}) = Bool
 convert(::Type{T}, ::Zero) where {T<:Number} = zero(T)
 convert(::Type{T}, ::One) where {T<:Number} = one(T)
 
+(::Type{T})(::Zero) where {T<:Number} = zero(T)
+(::Type{T})(::One) where {T<:Number} = one(T)
+
 Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
 One(x::Number) = isone(x) ? One() : throw(InexactError(:One, One, x))
 
@@ -50,8 +53,10 @@ for T in (Number, Real, Rational, Integer, Complex, Complex{Bool})
     Base.:/(::T, ::Zero) = throw(DivideError())
     Base.:*(x::T, ::One) = x
     Base.:*(::One, x::T) = x
-    Base.:/(x::T, ::One) = x
 end
+
+# Division sometimes returns a different type from the arguments, e.g. for Int/Int.
+Base.:/(x::AbstractFloat, ::One) = x
 
 # These functions are intentionally not type-stable.
 "Convert to Zero() if equal to zero. (Use immediately before calling a function.)"
