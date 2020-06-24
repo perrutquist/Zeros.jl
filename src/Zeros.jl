@@ -1,7 +1,7 @@
 module Zeros
 
 import Base: +, -, *, /, <, >, <=, >=, &, |, xor,
-     fma, muladd, mod, rem, modf, one, zero,
+     fma, muladd, mod, rem, modf, one, zero, div,
      ldexp, copysign, flipsign, sign, round, floor, ceil, trunc,
      promote_rule, convert, show, significand, string,
      AbstractFloat, Integer, Complex
@@ -27,11 +27,16 @@ promote_rule(::Type{<:StaticBool}, ::Type{<:StaticBool}) = Bool
 convert(::Type{T}, ::Zero) where {T<:Number} = zero(T)
 convert(::Type{T}, ::One) where {T<:Number} = one(T)
 
+# Why are these needed ???
 (::Type{T})(::Zero) where {T<:Number} = zero(T)
 (::Type{T})(::One) where {T<:Number} = one(T)
 
 Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
 One(x::Number) = isone(x) ? One() : throw(InexactError(:One, One, x))
+
+# disambig
+Zero(::Zero) = Zero()
+One(::One) = One()
 
 AbstractFloat(::Zero) = 0.0
 AbstractFloat(::One) = 1.0
@@ -57,6 +62,11 @@ end
 
 # Division sometimes returns a different type from the arguments, e.g. for Int/Int.
 Base.:/(x::AbstractFloat, ::One) = x
+
+# Loop over rounding modes in order to make methods specific enough to avoid ambiguities.
+for R in (RoundingMode, RoundingMode{:Down}, RoundingMode{:Up}, Union{RoundingMode{:Nearest}, RoundingMode{:NearestTiesAway}, RoundingMode{:NearestTiesUp}})
+    Base.div(x::Integer, ::One, ::R) = x
+end
 
 # These functions are intentionally not type-stable.
 "Convert to Zero() if equal to zero. (Use immediately before calling a function.)"
@@ -137,6 +147,8 @@ for op in [:mod, :rem], T in (:Real, :Rational)
 end
 mod(::Zero, ::Zero) = throw(DivideError()) # disambig
 rem(::Zero, ::Zero) = throw(DivideError()) #
+mod(::One, ::One) = Zero()
+rem(::One, ::One) = Zero()
 
 # Display Zero() as `𝟎` ("mathematical bold digit zero")
 # so that it looks slightly different from `0` (and same for One()).
@@ -144,6 +156,10 @@ show(io::IO, ::Zero) = print(io, "𝟎") # U+1D7CE
 show(io::IO, ::One) = print(io, "𝟏") # U+1D7CF
 
 string(z::StaticBool) = Base.print_to_string(z)
+
+Base.Checked.checked_abs(x::StaticBool) = x
+Base.Checked.checked_mul(x::StaticBool, y::StaticBool) = x*y
+Base.Checked.checked_add(x::StaticBool, y::StaticBool) = x+y
 
 if VERSION < v"1.2"
     # Disambiguation needed for older Julia versions

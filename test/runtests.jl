@@ -116,6 +116,9 @@ const I = One()
     @test sinh(Z) == sinh(0)
     @test cosh(Z) == cosh(0)
     @test tanh(Z) == tanh(0)
+
+    @test I//I isa Rational{One}
+    @test I//I + I//I == 2
 end
 
 # @testset "muladd" begin
