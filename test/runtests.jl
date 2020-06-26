@@ -104,18 +104,42 @@ const I = One()
     @test 1/I === 1.0
 
     @test log(I) == log(1)
+    @test log(I) === Z
     @test exp(Z) == exp(0)
+    @test exp(Z) === I
     @test sin(Z) == sin(0)
+    @test sin(Z) === Z
     @test cos(Z) == cos(0)
+    @test cos(Z) === I
     @test tan(Z) == tan(0)
+    @test tan(Z) === Z
     @test asin(Z) == asin(0)
+    @test asin(Z) === Z
     @test atan(Z) == atan(0)
+    @test atan(Z) === Z
     @test sinpi(Z) == sinpi(0)
+    @test sinpi(Z) === Z
     @test sinpi(I) == sinpi(1)
+    @test sinpi(I) === Z
     @test cospi(Z) == cospi(0)
+    @test cospi(Z) === I
     @test sinh(Z) == sinh(0)
+    @test sinh(Z) === Z
     @test cosh(Z) == cosh(0)
+    @test cosh(Z) === I
     @test tanh(Z) == tanh(0)
+    @test tanh(Z) === Z
+    @test sqrt(Z) == sqrt(0)
+    @test sqrt(Z) === Z
+    @test sqrt(I) == sqrt(1)
+    @test sqrt(I) === I
+
+    @test 3.0^Z === I
+    @test 3.0f0^Z === I
+    @test 3^Z === I
+    @test 3^Z === I
+    @test Z^Z === I
+    @test I^Z === I
 
     @test I//I isa Rational{One}
     @test I//I + I//I == 2
