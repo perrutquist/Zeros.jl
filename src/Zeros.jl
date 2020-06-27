@@ -157,6 +157,13 @@ Base.rem(::Zero, ::Zero) = throw(DivideError()) #
 Base.mod(::One, ::One) = Zero()
 Base.rem(::One, ::One) = Zero()
 
+# Sum up arrays of One() to Int
+Base.reduce_empty(::typeof(Base.add_sum), ::Type{One}) = zero(Int)
+Base.reduce_first(::typeof(Base.add_sum), x::One) = Int(x)
+
+# Sum up arrays of Zero() to Zero()
+Base.add_sum(::Zero, ::Zero) = Zero()
+
 # Display Zero() as `𝟎` ("mathematical bold digit zero")
 # so that it looks slightly different from `0` (and same for One()).
 Base.show(io::IO, ::Zero) = print(io, "𝟎") # U+1D7CE

@@ -5,7 +5,7 @@
 
 This module provides singular datatypes named Zero and One. All instances of each datatype are identical, and represent the values zero and one, respectively. This is a light-weight alternative to [StaticNumbers.jl](https://github.com/perrutquist/StaticNumbers.jl) when only these two values are needed.
 
-`Zero` and `One` are subtypes of `Integer`. The most common operations, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` or `One` type to their return values in a way that is correct for numbers, but not for IEEE 754 `Inf` and `NaN`. For example, `Zero()*x` reduces to `Zero()` at compile-time which has the effect that `Zero()*Inf` becomes `Zero()` rather than `NaN`. A value with this behaviour is sometimes referred to a "strong zero".
+`Zero` and `One` are subtypes of `Integer`. The most common operations, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` or `One` type to their return values in a way that is correct for numbers, but not for IEEE 754 `Inf` and `NaN`. For example, `Zero()*x` reduces to `Zero()` at compile-time which has the effect that `Zero()*Inf` becomes `Zero()` rather than `NaN`. A value with this behaviour is sometimes referred to as a "strong zero".
 
 Since the value of a `Zero` or `One` is known at compile-time, the complier might be able to make optimisations that might not be possible otherwise.
 

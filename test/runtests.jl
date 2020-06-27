@@ -1,5 +1,6 @@
 using Zeros
 using Test
+using Test: @inferred
 
 @testset "ambiguities" begin
     ambiguities = detect_ambiguities(Base, Zeros)
@@ -143,6 +144,16 @@ const I = One()
 
     @test I//I isa Rational{One}
     @test I//I + I//I == 2
+
+    @test sum(fill(I, 23)) == 23
+    @inferred sum(fill(One(), 23))
+    @test sum(One[]) === 0
+    @test sum([One()]) === 1
+
+    @test sum(fill(Z, 23)) === Z
+    @inferred sum(fill(Zero(), 23))
+    @test sum(Zero[]) === Z
+    @test sum([Zero()]) === Z
 end
 
 # @testset "muladd" begin
