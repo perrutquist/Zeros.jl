@@ -63,6 +63,9 @@ end
 # Division sometimes returns a different type from the arguments, e.g. for Int/Int.
 Base.:/(x::AbstractFloat, ::One) = x
 
+Base.inv(::One) = One()
+Base.inv(::Zero) = throw(DivideError())
+
 # Loop over rounding modes in order to make methods specific enough to avoid ambiguities.
 for R in (RoundingMode, RoundingMode{:Down}, RoundingMode{:Up}, Union{RoundingMode{:Nearest}, RoundingMode{:NearestTiesAway}, RoundingMode{:NearestTiesUp}})
     Base.div(x::Integer, ::One, ::R) = x
@@ -115,9 +118,16 @@ for op in [:sign, :round, :floor, :ceil, :trunc, :significand]
 end
 
 Base.log(::One) = Zero()
+Base.log10(::One) = Zero()
+Base.log2(::One) = Zero()
+Base.log1p(::Zero) = Zero()
 Base.exp(::Zero) = One()
+Base.exp2(::Zero) = One()
+Base.exp10(::Zero) = One()
+Base.expm1(::Zero) = Zero()
 Base.sin(::Zero) = Zero()
 Base.cos(::Zero) = One()
+Base.sincos(::Zero) = (Zero(), One())
 Base.tan(::Zero) = Zero()
 Base.asin(::Zero) = Zero()
 Base.atan(::Zero) = Zero()
@@ -129,6 +139,8 @@ Base.cosh(::Zero) = One()
 Base.tanh(::Zero) = Zero()
 Base.sqrt(::One) = One()
 Base.sqrt(::Zero) = Zero()
+Base.cbrt(::One) = One()
+Base.cbrt(::Zero) = Zero()
 
 # ^ has a lot of very specific methods in Base....
 for T in (Float16, Float32, Float64, BigFloat, AbstractFloat, Rational, Complex{<:AbstractFloat}, Complex{<:Integer}, Integer, BigInt)
