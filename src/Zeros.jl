@@ -20,10 +20,12 @@ Base.promote_rule(::Type{<:StaticBool}, ::Type{<:StaticBool}) = Bool
 
 Base.convert(::Type{T}, ::Zero) where {T<:Number} = zero(T)
 Base.convert(::Type{T}, ::One) where {T<:Number} = one(T)
+Base.convert(::Type{Zero}, ::One) = throw(InexactError(:Zero, Zero, One()))
+Base.convert(::Type{One}, ::Zero) = throw(InexactError(:One, One, Zero()))
 
 # Why are these needed ???
-(::Type{T})(::Zero) where {T<:Number} = zero(T)
-(::Type{T})(::One) where {T<:Number} = one(T)
+(::Type{T})(::Zero) where {T<:Number} = convert(T, Zero())
+(::Type{T})(::One) where {T<:Number} = convert(T, One())
 
 #disambig
 Base.Integer(::Zero) = zero(Integer) # Int(0)
@@ -169,12 +171,27 @@ Base.rem(::Zero, ::Zero) = throw(DivideError()) #
 Base.mod(::One, ::One) = Zero()
 Base.rem(::One, ::One) = Zero()
 
-# Sum up arrays of One() to Int
+# Sum up vector of One() to Int
 Base.reduce_empty(::typeof(Base.add_sum), ::Type{One}) = zero(Int)
 Base.reduce_first(::typeof(Base.add_sum), x::One) = Int(x)
 
 # Sum up arrays of Zero() to Zero()
 Base.add_sum(::Zero, ::Zero) = Zero()
+
+# Product of vector of Zero() to Bool
+Base.reduce_empty(::typeof(Base.mul_prod), ::Type{Zero}) = true
+Base.reduce_first(::typeof(Base.mul_prod), ::Zero) = false
+
+# Product of vector of One() to One()
+Base.reduce_empty(::typeof(Base.mul_prod), ::Type{One}) = One()
+
+# Multiply up arrays of One() to One()
+Base.mul_prod(::One, ::One) = One()
+
+# Multiply up arrays of Zero() to `false` (when length is nonzero)
+Base.mul_prod(::Zero, x::Zero) = false
+Base.mul_prod(::Zero, x::Bool) = false
+Base.mul_prod(::Bool, x::Zero) = false
 
 # Display Zero() as `𝟎` ("mathematical bold digit zero")
 # so that it looks slightly different from `0` (and same for One()).

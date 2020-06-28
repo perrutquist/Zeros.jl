@@ -146,14 +146,24 @@ const I = One()
     @test I//I + I//I == 2
 
     @test sum(fill(I, 23)) == 23
-    @inferred sum(fill(One(), 23))
+    @inferred sum(fill(I, 23))
     @test sum(One[]) === 0
     @test sum([One()]) === 1
 
     @test sum(fill(Z, 23)) === Z
-    @inferred sum(fill(Zero(), 23))
+    @inferred sum(fill(Z, 23))
     @test sum(Zero[]) === Z
     @test sum([Zero()]) === Z
+
+    @test prod(fill(I, 23)) == 1
+    @inferred prod(fill(I, 23))
+    @test prod(One[]) === I
+    @test prod([One()]) === I
+
+    @test prod(fill(Z, 23)) === false
+    @inferred prod(fill(Zero(), 23))
+    @test prod(Zero[]) === true
+    @test prod([Zero()]) === false
 end
 
 # @testset "muladd" begin
