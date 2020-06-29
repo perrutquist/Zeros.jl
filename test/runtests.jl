@@ -234,6 +234,15 @@ end
     @test Float32(I) === 1.0f0
     @test Float64(Z) === 0.0
     @test Float64(I) === 1.0
+
+    @test Zero()^0 === true
+    @test Zero()^1 === false
+
+    # Bypass litteral_pow
+    n0 = 0
+    @test Zero()^n0 === true
+    n1 = 1
+    @test Zero()^n1 === false
 end
 
 # @testset "muladd" begin
@@ -294,7 +303,7 @@ end
 # Test `MyComplex` example type
 include("mycomplex_example.jl")
 @testset "mycomplex_example.jl" begin
-    @test MyImaginary(2)*MyImaginary(3) === MyReal(-6)
+    @test MyComplex(Zero(), 2)*MyComplex(Zero(), 3) === MyComplex(-6, Zero())
 end
 
 Zeros.@pirate Base

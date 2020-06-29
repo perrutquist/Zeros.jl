@@ -161,6 +161,8 @@ for T in (Float16, Float32, Float64, BigFloat, AbstractFloat, Rational, Complex{
     Base.:^(::T, ::Zero) = One()
 end
 
+Base.to_power_type(::Zero) = false
+
 # # Avoid promotion of triplets
 # for op in [:fma :muladd]
 #     @eval $op(::Zero, ::Zero, ::Zero) = Zero()

@@ -1,27 +1,25 @@
 using Zeros
 
-abstract type MyAbstractComplex{T<:Real} end
-
-struct MyComplex{T<:Real} <: MyAbstractComplex{T}
-  re::T
-  im::T
+struct MyComplex{R,I} <: Number
+  re::R
+  im::I
 end
 
-struct MyReal{T<:Real} <: MyAbstractComplex{T}
-  re::T
-  im::Zero
+MyComplex(x::Real) = MyComplex(x, Zero())
+MyComplex{R,I}(x::Real) where {R,I} = MyComplex(R(x), I(Zero()))
+MyComplex{R,I}(x::MyComplex) where {R,I} = MyComplex(R(x.re), I(x.im))
+
+Base.:*(x::MyComplex, y::MyComplex) = MyComplex(x.re*y.re - x.im*y.im, x.re*y.im + x.im*y.re)
+Base.:+(x::MyComplex, y::MyComplex) = MyComplex(x.re + y.re, x.im + y.im)
+Base.:-(x::MyComplex, y::MyComplex) = MyComplex(x.re - y.re, x.im - y.im)
+
+for op in (:*, :+, :-)
+    @eval begin
+        Base.$op(x::Real, y::MyComplex) = $op(MyComplex(x), y)
+        Base.$op(x::MyComplex, y::Real) = $op(x, MyComplex(y))
+    end
 end
 
-struct MyImaginary{T<:Real} <: MyAbstractComplex{T}
-  re::Zero
-  im::T
-end
+const i = MyComplex(Zero(), One())
 
-MyReal(re::T) where {T<:Real} = MyReal{T}(re, Zero())
-MyImaginary(im::T) where {T<:Real} = MyImaginary{T}(Zero(), im)
-MyComplex(re::Real, im::Zero) = MyReal(re)
-MyComplex(re::Zero, im::Real) = MyImaginary(im)
-MyComplex(::Zero, ::Zero) = MyComplex{Zero}(Zero(), Zero()) # disambiguation
-
-Base.:*(x::MyAbstractComplex, y::MyAbstractComplex) =
-    MyComplex(x.re*y.re - x.im*y.im, x.re*y.im + x.im*y.re)
+sizeof(1i) # 8, half the size of 1im
