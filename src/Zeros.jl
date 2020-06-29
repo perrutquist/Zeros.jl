@@ -33,6 +33,8 @@ Base.convert(::Type{One}, ::Zero) = throw(InexactError(:One, One, Zero()))
 (::Type{T})(::One) where {T<:Number} = convert(T, One())
 
 #disambig
+Base.Bool(::Zero) = false
+Base.Bool(::One) = true
 Base.Integer(::Zero) = zero(Integer) # Int(0)
 Base.Integer(::One) = one(Integer) # Int(1)
 

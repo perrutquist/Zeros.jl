@@ -223,6 +223,17 @@ end
 
     @test div(3, I) === 3
     @test div(Int32(3), I) === Int32(3)
+
+    @test Bool(Z) === false
+    @test Bool(I) === true
+    @test Int32(Z) === Int32(0)
+    @test Int32(I) === Int32(1)
+    @test Int64(Z) === 0
+    @test Int64(I) === 1
+    @test Float32(Z) === 0.0f0
+    @test Float32(I) === 1.0f0
+    @test Float64(Z) === 0.0
+    @test Float64(I) === 1.0
 end
 
 # @testset "muladd" begin

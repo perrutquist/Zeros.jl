@@ -4,7 +4,7 @@
 Extend some functions in Base to return `Zero()` or `One()`, even when called without
 any arguments of types "owned" by Zeros.jl. (This is sometimes referred to as "type piracy".)
 
-The function calls s `+()` and `*()` (without arguments) will return `Zero()` and `One()`
+The function calls `+()` and `*()` (without arguments) will return `Zero()` and `One()`
 respectively. The same will be true for `zero()` and `one()` without arguments.
 
 The functions `zero(Any)` and `one(Any)` will also return `Zero()` and `One()`, respectively,
