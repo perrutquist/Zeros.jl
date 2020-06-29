@@ -114,6 +114,10 @@ end
     @test string(I) == "𝟏"
     @test mod(Z, 3) === Z
     @test mod(Z, 3.0) === Z
+    @test mod(I, I) == mod(1, 1)
+    @test mod(I, I) === Z
+    @test rem(I, I) == rem(1, 1)
+    @test rem(I, I) === Z
     @test rem(Z, 3) === Z
     @test rem(Z, 3.0) === Z
     @test modf(Z) === (Z, Z)
@@ -131,6 +135,10 @@ end
     @test log1p(Z) === Z
     @test exp(Z) == exp(0)
     @test exp(Z) === I
+    @test exp2(Z) == exp2(0)
+    @test exp2(Z) === I
+    @test exp10(Z) == exp10(0)
+    @test exp10(Z) === I
     @test expm1(Z) == expm1(0)
     @test expm1(Z) === Z
     @test sin(Z) == sin(0)
@@ -266,6 +274,8 @@ end
     @test_throws DivideError inv(Z)
     @test_throws InexactError Zero(One())
     @test_throws InexactError One(Zero())
+    @test_throws DivideError mod(Z, Z)
+    @test_throws DivideError rem(Z, Z)
 end
 
 # Test `MyComplex` example type
