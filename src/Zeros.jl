@@ -23,8 +23,8 @@ for S in (Zero, One, Bool), T in (Zero, One, Bool)
     end
 end
 
-Base.convert(::Type{T}, ::Zero) where {T<:Number} = zero(T)
-Base.convert(::Type{T}, ::One) where {T<:Number} = one(T)
+Base.convert(::Type{T}, ::Zero) where {T<:Number} = T(zero(T))
+Base.convert(::Type{T}, ::One) where {T<:Number} = oneunit(T)
 Base.convert(::Type{Zero}, ::One) = throw(InexactError(:Zero, Zero, One()))
 Base.convert(::Type{One}, ::Zero) = throw(InexactError(:One, One, Zero()))
 
@@ -100,7 +100,7 @@ for op in (:+, :-, :*, :&, :|, :xor)
 end
 
 Base.:+(::One, x::Bool) = 1 + x
-Base.:+(x::Bool, ::One) = 1 + x
+Base.:+(x::Bool, ::One) = x + 1
 
 Base.:-(::Zero) = Zero()
 Base.:-(::One) = -1

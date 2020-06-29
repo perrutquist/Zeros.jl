@@ -276,6 +276,8 @@ end
     @test_throws InexactError One(Zero())
     @test_throws DivideError mod(Z, Z)
     @test_throws DivideError rem(Z, Z)
+    @test_throws MethodError convert(Irrational{:π}, Zero())
+    @test_throws MethodError convert(Irrational{:π}, One())
 end
 
 # Test `MyComplex` example type
