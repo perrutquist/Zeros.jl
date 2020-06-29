@@ -14,6 +14,23 @@ end
 const Z = Zero()
 const I = One()
 
+@testset "Promotion" begin
+    @test promote_type(One, Bool) === Bool
+    @test promote_type(One, Int32) === Int32
+    @test promote_type(One, Int64) === Int64
+    @test promote_type(One, Float32) === Float32
+    @test promote_type(One, Float64) === Float64
+    @test promote_type(One, Complex{Bool}) === Complex{Bool}
+    @test promote_type(One, Complex{Float64}) === Complex{Float64}
+    @test promote_type(Zero, Bool) === Bool
+    @test promote_type(Zero, Int32) === Int32
+    @test promote_type(Zero, Int64) === Int64
+    @test promote_type(Zero, Float32) === Float32
+    @test promote_type(Zero, Float64) === Float64
+    @test promote_type(Zero, Complex{Bool}) === Complex{Bool}
+    @test promote_type(Zero, Complex{Float64}) === Complex{Float64}
+end
+
 @testset "Real" begin
     @test iszero(Z) === true
     @test isone(I) === true
@@ -164,6 +181,12 @@ const I = One()
     @inferred prod(fill(Zero(), 23))
     @test prod(Zero[]) === true
     @test prod([Zero()]) === false
+
+    @test false + One() === 1
+    @test One() + false === 1
+
+    @test false + Zero() === false
+    @test Zero() + false === false
 end
 
 # @testset "muladd" begin

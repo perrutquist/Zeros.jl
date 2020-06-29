@@ -12,11 +12,16 @@ end
 
 const StaticBool = Union{Zero, One}
 
-Base.promote_rule(::Type{<:StaticBool}, ::Type{T}) where {T<:Number} = T
-Base.promote_rule(::Type{<:StaticBool}, ::Type{T}) where {T<:Real} = T
-Base.promote_rule(::Type{<:StaticBool}, ::Type{Complex{T}}) where {T<:Real} = Complex{T}
-Base.promote_rule(::Type{<:StaticBool}, ::Type{Bool}) = Bool
-Base.promote_rule(::Type{<:StaticBool}, ::Type{<:StaticBool}) = Bool
+Base.promote_rule(::Type{One}, ::Type{T}) where {T<:Number} = T
+Base.promote_rule(::Type{Zero}, ::Type{T}) where {T<:Number} = T
+
+# For some reason the promote-rules involving StaticBool and Bool need to be
+# defined in both directions, or we get stack overflow.
+for S in (Zero, One, Bool), T in (Zero, One, Bool)
+    if S ≠ T
+        Base.promote_rule(::Type{S}, ::Type{T}) = Bool
+    end
+end
 
 Base.convert(::Type{T}, ::Zero) where {T<:Number} = zero(T)
 Base.convert(::Type{T}, ::One) where {T<:Number} = one(T)
@@ -91,6 +96,9 @@ for op in (:+, :-, :*, :&, :|, :xor)
         end
     end
 end
+
+Base.:+(::One, x::Bool) = 1 + x
+Base.:+(x::Bool, ::One) = 1 + x
 
 Base.:-(::Zero) = Zero()
 Base.:-(::One) = -1
