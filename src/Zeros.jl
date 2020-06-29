@@ -42,6 +42,8 @@ One(x::Number) = isone(x) ? One() : throw(InexactError(:One, One, x))
 # disambig
 Zero(::Zero) = Zero()
 One(::One) = One()
+Zero(::One) = throw(InexactError(:Zero, Zero, One()))
+One(::Zero) = throw(InexactError(:One, One, Zero()))
 
 Base.AbstractFloat(::Zero) = 0.0
 Base.AbstractFloat(::One) = 1.0

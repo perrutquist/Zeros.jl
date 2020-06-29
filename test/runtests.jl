@@ -123,12 +123,22 @@ end
 
     @test log(I) == log(1)
     @test log(I) === Z
+    @test log2(I) == log2(1)
+    @test log2(I) === Z
+    @test log10(I) == log10(1)
+    @test log10(I) === Z
+    @test log1p(Z) == log1p(0)
+    @test log1p(Z) === Z
     @test exp(Z) == exp(0)
     @test exp(Z) === I
+    @test expm1(Z) == expm1(0)
+    @test expm1(Z) === Z
     @test sin(Z) == sin(0)
     @test sin(Z) === Z
     @test cos(Z) == cos(0)
     @test cos(Z) === I
+    @test sincos(Z) == sincos(0)
+    @test sincos(Z) === (Z, I)
     @test tan(Z) == tan(0)
     @test tan(Z) === Z
     @test asin(Z) == asin(0)
@@ -151,6 +161,10 @@ end
     @test sqrt(Z) === Z
     @test sqrt(I) == sqrt(1)
     @test sqrt(I) === I
+    @test cbrt(Z) == cbrt(0)
+    @test cbrt(Z) === Z
+    @test cbrt(I) == cbrt(1)
+    @test cbrt(I) === I
 
     @test 3.0^Z === I
     @test 3.0f0^Z === I
@@ -187,6 +201,20 @@ end
 
     @test false + Zero() === false
     @test Zero() + false === false
+
+    @test Integer(Z) === 0
+    @test Integer(I) === 1
+
+    @test AbstractFloat(Z) === 0.0
+    @test AbstractFloat(I) === 1.0
+
+    @test Zero(Z) === Z
+    @test One(I) === I
+
+    @test inv(I) === I
+
+    @test div(3, I) === 3
+    @test div(Int32(3), I) === Int32(3)
 end
 
 # @testset "muladd" begin
@@ -235,6 +263,9 @@ end
     @test_throws DivideError (1.0+2.0im)/Z
     @test_throws DivideError Z/Z
     @test_throws DivideError I/Z
+    @test_throws DivideError inv(Z)
+    @test_throws InexactError Zero(One())
+    @test_throws InexactError One(Zero())
 end
 
 # Test `MyComplex` example type
