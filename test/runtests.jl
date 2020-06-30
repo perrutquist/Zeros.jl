@@ -306,9 +306,9 @@ end
 end
 
 # Test `MyComplex` example type
-include("mycomplex_example.jl")
-@testset "mycomplex_example.jl" begin
-    @test MyComplex(Zero(), 2)*MyComplex(Zero(), 3) === MyComplex(-6, Zero())
+include("complex2_example.jl")
+@testset "Complex example" begin
+    @test Complex2(Zero(), 2)*Complex2(Zero(), 3) === Complex2(-6, Zero())
     @test abs(i) === One()
 end
 
