@@ -243,6 +243,11 @@ end
     @test Zero()^n0 === true
     n1 = 1
     @test Zero()^n1 === false
+
+    @test hypot(-7, Z) === 7
+    @test hypot(Z, -7) === 7
+    @test hypot(-7.0, Z) === 7.0
+    @test hypot(Z, -7.0) === 7.0
 end
 
 # @testset "muladd" begin
@@ -304,6 +309,7 @@ end
 include("mycomplex_example.jl")
 @testset "mycomplex_example.jl" begin
     @test MyComplex(Zero(), 2)*MyComplex(Zero(), 3) === MyComplex(-6, Zero())
+    @test abs(i) === One()
 end
 
 Zeros.@pirate Base

@@ -29,10 +29,14 @@ for op in (:*, :/)
     end
 end
 
-Base.adjoint(x::MyComplex) = MyComplex(x.re, -x.im)
-Base.abs2(x::MyComplex) = x.re^2 + x.im^2
 Base.real(x::MyComplex) = x.re
 Base.imag(x::MyComplex) = x.im
+Base.conj(x::MyComplex) = MyComplex(x.re, -x.im)
+Base.adjoint(x::MyComplex) = conj(x)
+Base.abs(x::MyComplex) = hypot(x.re, x.im)
+Base.abs2(x::MyComplex) = x.re*x.re + x.im*x.im
+Base.angle(x::MyComplex) = atan(z.im, z.re)
+# Many more functions could be copied from base/complex.jl with no or minimal modifications
 
 Base.:+(x::MyComplex, y::MyComplex) = MyComplex(x.re + y.re, x.im + y.im)
 Base.:-(x::MyComplex, y::MyComplex) = MyComplex(x.re - y.re, x.im - y.im)
@@ -57,3 +61,5 @@ using Test
 @test sizeof(1*i) == sizeof(1*im)/2
 @test i*i isa MyReal
 @test 1/i isa MyImag
+@test abs(-7i) === 7
+@test abs(-7im) === 7.0

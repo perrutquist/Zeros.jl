@@ -155,6 +155,8 @@ Base.sqrt(::One) = One()
 Base.sqrt(::Zero) = Zero()
 Base.cbrt(::One) = One()
 Base.cbrt(::Zero) = Zero()
+Base.hypot(::Zero, x::Number) = abs(x)
+Base.hypot(x::Number, ::Zero) = abs(x)
 
 # ^ has a lot of very specific methods in Base....
 for T in (Float16, Float32, Float64, BigFloat, AbstractFloat, Rational, Complex{<:AbstractFloat}, Complex{<:Integer}, Integer, BigInt)
