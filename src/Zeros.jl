@@ -28,16 +28,18 @@ Base.convert(::Type{T}, ::One) where {T<:Number} = oneunit(T)
 Base.convert(::Type{Zero}, ::One) = throw(InexactError(:Zero, Zero, One()))
 Base.convert(::Type{One}, ::Zero) = throw(InexactError(:One, One, Zero()))
 
-# Why are these needed ???
-(::Type{T})(::Zero) where {T<:Number} = convert(T, Zero())
-(::Type{T})(::One) where {T<:Number} = convert(T, One())
+# Some of the more common constructors that do not default to `convert`
+# Note:  We cannot have a (::Type{T})(x::StaticBool) where {T<:Number} constructor
+# instead of all of these, because of ambiguities with user-defined types.
+for T in (:Bool, :Integer, :AbstractFloat,
+          :BigInt, :Int128, :Int16, :Int32, :Int64, :Int8,
+          :UInt128, :UInt16, :UInt32, :UInt64, :UInt8,
+          :BigFloat, :Float16, :Float32, :Float64)
+    @eval Base.$T(::Zero) = zero($T)
+    @eval Base.$T(::One) = one($T)
+end
 
 #disambig
-Base.Bool(::Zero) = false
-Base.Bool(::One) = true
-Base.Integer(::Zero) = zero(Integer) # Int(0)
-Base.Integer(::One) = one(Integer) # Int(1)
-
 Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
 One(x::Number) = isone(x) ? One() : throw(InexactError(:One, One, x))
 
@@ -46,9 +48,6 @@ Zero(::Zero) = Zero()
 One(::One) = One()
 Zero(::One) = throw(InexactError(:Zero, Zero, One()))
 One(::Zero) = throw(InexactError(:One, One, Zero()))
-
-Base.AbstractFloat(::Zero) = 0.0
-Base.AbstractFloat(::One) = 1.0
 
 Base.zero(::StaticBool) = Zero()
 Base.zero(::Type{<:StaticBool}) = Zero()
