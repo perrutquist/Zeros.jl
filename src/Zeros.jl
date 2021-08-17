@@ -40,14 +40,10 @@ for T in (:Bool, :Integer, :AbstractFloat,
 end
 
 #disambig
-Zero(x::Number) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
-One(x::Number) = isone(x) ? One() : throw(InexactError(:One, One, x))
-
-# disambig
-Zero(::Zero) = Zero()
-One(::One) = One()
-Zero(::One) = throw(InexactError(:Zero, Zero, One()))
-One(::Zero) = throw(InexactError(:One, One, Zero()))
+for T in (:Number, :Complex, :Rational, :BigFloat, Zero, One)
+    @eval Zero(x::$T) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
+    @eval One(x::$T) = isone(x) ? One() : throw(InexactError(:One, One, x))
+end
 
 Base.zero(::StaticBool) = Zero()
 Base.zero(::Type{<:StaticBool}) = Zero()
@@ -156,6 +152,7 @@ Base.cbrt(::One) = One()
 Base.cbrt(::Zero) = Zero()
 Base.hypot(::Zero, x::Number) = abs(x)
 Base.hypot(x::Number, ::Zero) = abs(x)
+Base.hypot(::Zero, ::Zero) = Zero()
 
 # ^ has a lot of very specific methods in Base....
 for T in (Float16, Float32, Float64, BigFloat, AbstractFloat, Rational, Complex{<:AbstractFloat}, Complex{<:Integer}, Integer, BigInt)
