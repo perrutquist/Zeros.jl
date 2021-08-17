@@ -64,11 +64,6 @@ using Test
 @test abs(-7i) === 7
 @test abs(-7im) === 7.0
 
-if VERSION < v"1.2"
-    using Pkg
-    Pkg.add("BenchmarkTools")
-end
-
 using BenchmarkTools
 f(x,y) = x + y*im
 g(x,y) = x + y*i

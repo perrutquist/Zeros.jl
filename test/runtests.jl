@@ -304,11 +304,13 @@ end
     @test_throws MethodError convert(Irrational{:π}, One())
 end
 
-# Test `MyComplex` example type
-include("complex2_example.jl")
-@testset "Complex example" begin
-    @test Complex2(Zero(), 2)*Complex2(Zero(), 3) === Complex2(-6, Zero())
-    @test abs(i) === One()
+if VERSION < v"1.2" # no test on 1.0 because of BenchmarkTools dependency
+    # Test `MyComplex` example type
+    include("complex2_example.jl")
+    @testset "Complex example" begin
+        @test Complex2(Zero(), 2)*Complex2(Zero(), 3) === Complex2(-6, Zero())
+        @test abs(i) === One()
+    end
 end
 
 Zeros.@pirate Base
