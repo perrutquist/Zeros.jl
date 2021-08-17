@@ -2,8 +2,6 @@ module Zeros
 
 export Zero, testzero, One, testone
 
-#import Base: Bool, Integer, AbstractFloat, BigInt, Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8, BigFloat, Float16, Float32, Float64
-
 "A type that stores no data, and holds the value zero."
 struct Zero <: Integer
 end
