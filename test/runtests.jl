@@ -304,7 +304,7 @@ end
     @test_throws MethodError convert(Irrational{:π}, One())
 end
 
-if VERSION < v"1.2" # no test on 1.0 because of BenchmarkTools dependency
+if VERSION ≥ v"1.2" # no test on 1.0 because of BenchmarkTools dependency
     # Test `MyComplex` example type
     include("complex2_example.jl")
     @testset "Complex example" begin
