@@ -247,6 +247,9 @@ end
     @test hypot(Z, -7) === 7
     @test hypot(-7.0, Z) === 7.0
     @test hypot(Z, -7.0) === 7.0
+    @test hypot(Z, Z) === Z
+
+    @test I:3 === Base.OneTo(3)
 end
 
 # @testset "muladd" begin

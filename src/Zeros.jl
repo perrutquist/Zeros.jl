@@ -205,6 +205,8 @@ Base.mul_prod(::Zero, x::Zero) = false
 Base.mul_prod(::Zero, x::Bool) = false
 Base.mul_prod(::Bool, x::Zero) = false
 
+Base.:(:)(::One, stop::Integer) = Base.OneTo(stop)
+
 # Display Zero() as `𝟎` ("mathematical bold digit zero")
 # so that it looks slightly different from `0` (and same for One()).
 Base.show(io::IO, ::Zero) = print(io, "𝟎") # U+1D7CE
