@@ -19,6 +19,7 @@ end
 pirate_code(::Val{:Base}) = quote
    Base.:+() = Zero()
    Base.:*() = One()
+   Base.sum(::Tuple{}) = Zero()
    Base.zero() = Zero()
    Base.one() = One()
    Base.zero(::Type{Any}) = Zero()
