@@ -2,7 +2,9 @@ module Zeros
 
 export Zero, testzero, One, testone
 
- "A type that stores no data, and holds the value zero."
+#import Base: Bool, Integer, AbstractFloat, BigInt, Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8, BigFloat, Float16, Float32, Float64
+
+"A type that stores no data, and holds the value zero."
 struct Zero <: Integer
 end
 
@@ -31,16 +33,16 @@ Base.convert(::Type{One}, ::Zero) = throw(InexactError(:One, One, Zero()))
 # Some of the more common constructors that do not default to `convert`
 # Note:  We cannot have a (::Type{T})(x::StaticBool) where {T<:Number} constructor
 # instead of all of these, because of ambiguities with user-defined types.
-for T in (:Bool, :Integer, :AbstractFloat,
-          :BigInt, :Int128, :Int16, :Int32, :Int64, :Int8,
-          :UInt128, :UInt16, :UInt32, :UInt64, :UInt8,
-          :BigFloat, :Float16, :Float32, :Float64)
-    @eval Base.$T(::Zero) = zero($T)
-    @eval Base.$T(::One) = one($T)
+for T in (Bool, Integer, AbstractFloat,
+          BigInt, Int128, Int16, Int32, Int64, Int8,
+          UInt128, UInt16, UInt32, UInt64, UInt8,
+          BigFloat, Float16, Float32, Float64)
+    (::Type{T})(::Zero) = zero(T)
+    (::Type{T})(::One) = one(T)
 end
 
 #disambig
-for T in (:Number, :Complex, :Rational, :BigFloat, Zero, One)
+for T in (:Number, :Complex, :Rational, :BigFloat, :Zero, :One)
     @eval Zero(x::$T) = iszero(x) ? Zero() : throw(InexactError(:Zero, Zero, x))
     @eval One(x::$T) = isone(x) ? One() : throw(InexactError(:One, One, x))
 end
@@ -88,10 +90,8 @@ testone(x::Number) = isone(x) ? One() : x
 for op in (:+, :-, :*, :&, :|, :xor)
     for (T1,x) in ((:Zero, 0), (:One, 1))
         for (T2,y) in ((:Zero, 0), (:One, 1))
-            val = @eval($op($x,$y))
-            val = testzero(val)
-            val = testone(val)
-            @eval Base.$op(::$T1, ::$T2) = $val
+            val = @eval $op($x,$y)
+            @eval Base.$op(::$T1, ::$T2) = $(testzero(testone(val)))
         end
     end
 end
@@ -121,9 +121,8 @@ Base.modf(::Zero) = (Zero(), Zero())
 # ==, !=, abs, isinf, isnan, isinteger, isreal, isimag,
 # signed, unsigned, float, big, complex, isodd, iseven
 
-for op in [:sign, :round, :floor, :ceil, :trunc, :significand]
-    @eval Base.$op(::Zero) = Zero()
-    @eval Base.$op(::One) = One()
+for op in (:sign, :round, :floor, :ceil, :trunc, :significand, :sqrt, :cbrt)
+    @eval Base.$op(x::StaticBool) = x
 end
 
 Base.log(::One) = Zero()
@@ -146,10 +145,6 @@ Base.cospi(::Zero) = One()
 Base.sinh(::Zero) = Zero()
 Base.cosh(::Zero) = One()
 Base.tanh(::Zero) = Zero()
-Base.sqrt(::One) = One()
-Base.sqrt(::Zero) = Zero()
-Base.cbrt(::One) = One()
-Base.cbrt(::Zero) = Zero()
 Base.hypot(::Zero, x::Number) = abs(x)
 Base.hypot(x::Number, ::Zero) = abs(x)
 Base.hypot(::Zero, ::Zero) = Zero()
@@ -175,7 +170,7 @@ Base.to_power_type(::Zero) = false
 #     end
 # end
 
-for op in [:mod, :rem], T in (:Real, :Rational)
+for op in (:mod, :rem), T in (:Real, :Rational)
   @eval Base.$op(::Zero, ::$T) = Zero()
 end
 Base.mod(::Zero, ::Zero) = throw(DivideError()) # disambig
