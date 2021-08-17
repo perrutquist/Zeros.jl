@@ -1,6 +1,6 @@
 # Zeros.jl
 
-[![Build Status](https://travis-ci.org/perrutquist/Zeros.jl.svg?branch=master)](https://travis-ci.org/perrutquist/Zeros.jl)
+[![Build Status](https://travis-ci.com/perrutquist/Zeros.jl.svg?branch=master)](https://travis-ci.com/perrutquist/Zeros.jl)
 [![codecov.io](http://codecov.io/github/perrutquist/Zeros.jl/coverage.svg?branch=master)](http://codecov.io/github/perrutquist/Zeros.jl?branch=master)
 
 This module provides singular datatypes named Zero and One. All instances of each datatype are identical, and represent the values zero and one, respectively. This is a light-weight alternative to [StaticNumbers.jl](https://github.com/perrutquist/StaticNumbers.jl) when only these two values are needed.
@@ -8,6 +8,8 @@ This module provides singular datatypes named Zero and One. All instances of eac
 `Zero` and `One` are subtypes of `Integer`. The most common operations, such as `+`, `-`, `*`, `/`, `<`, `>`, etc. are defined. Operations like `*` propagate the `Zero` or `One` type to their return values in a way that is correct for numbers, but not for IEEE 754 `Inf` and `NaN`. For example, `Zero()*x` reduces to `Zero()` at compile-time which has the effect that `Zero()*Inf` becomes `Zero()` rather than `NaN`. A value with this behaviour is sometimes referred to as a "strong zero".
 
 Since the value of a `Zero` or `One` is known at compile-time, the complier might be able to make optimisations that might not be possible otherwise.
+
+With Julia v1.3 and later, the Unicode symbols `𝟎` and `𝟏` can be used as aliases for `Zero()` and `One()`. These can be entered from the keyboard as `\bfzero` or `\bfone` followed by a tab. (User beware: Depending on the font used, it might be hard to tell the difference between these symbols and the numbers `0` and `1`.)
 
 Trying to convert a nonzero value to `Zero` will throw an `InexactError`.
 
@@ -20,5 +22,5 @@ The command
 ```
 Zeros.@pirate Base
 ```
-can be used to enable a few more method definitions, such as `+()` (the sum of zero terms)
+can be used to enable a few more (rarely needed) method definitions, such as `+()` (the sum of zero terms)
 and `*()` (the product of zero factors).
