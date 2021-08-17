@@ -225,6 +225,15 @@ if VERSION < v"1.2"
     Base.flipsign(::Zero, x::Unsigned) = Zero()
 end
 
+if VERSION ≥ v"1.3"
+    # @eval, because this needs to parse in Julia 1.0, even though it will not run
+    @eval begin
+        export $(Symbol("𝟎")), $(Symbol("𝟏")) 
+        const $(Symbol("𝟎")) = Zero()  # \bfzero <tab>
+        const $(Symbol("𝟏")) = One()   # \bfone <tab>
+    end
+end
+
 include("pirate.jl")
 
 end # module
