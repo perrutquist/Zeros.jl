@@ -176,19 +176,24 @@ function Base.literal_pow(::typeof(Base.:^), ::Zero, ::Val{p}) where p
     return Zero()
 end
 
-# # Avoid promotion of triplets
-# for op in [:fma :muladd]
-#     @eval $op(::Zero, ::Zero, ::Zero) = Zero()
-#     for T in (Real, Integer)
-#         @eval $op(::Zero, ::$T, ::Zero) = Zero()
-#         @eval $op(::$T, ::Zero, ::Zero) = Zero()
-#         @eval $op(::Zero, x::$T, y::$T) = convert(promote_type(typeof(x),typeof(y)),y)
-#         @eval $op(x::$T, ::Zero, y::$T) = convert(promote_type(typeof(x),typeof(y)),y)
-#         @eval $op(x::$T, y::$T, ::Zero) = x*y
-#         @eval $op(::One, x::$T, y::$T) = x+y
-#         @eval $op(x::$T, ::One, y::$T) = x+y
-#     end
-# end
+# Functions that perform a*b+c in one go
+for op in [:fma :muladd]
+    @eval Base.$op(::Zero, ::Zero, ::Zero) = Zero()
+    @eval Base.$op(::Zero,::Number,::Zero) = Zero()
+    @eval Base.$op(::Number,::Zero,::Zero) = Zero()
+    @eval Base.$op(x::Number, y::Number, ::Zero) = x*y
+    @eval Base.$op(::One, x::Number, y::Number) = x+y
+    @eval Base.$op(x::Number, ::One, y::Number) = x+y
+    for T in (Real, Complex) # Special definitions for Real and Complex to avoid method ambiguities.
+        @eval Base.$op(::Zero,::$T,::Zero) = Zero()
+        @eval Base.$op(::$T,::Zero,::Zero) = Zero()
+        for T2 in (Real, Complex)
+            @eval Base.$op(x::$T, y::$T2, ::Zero) = x*y
+            @eval Base.$op(::One, x::$T, y::$T2) = x+y
+            @eval Base.$op(x::$T, ::One, y::$T2) = x+y
+        end
+    end
+end
 
 for op in (:mod, :rem), T in (:Real, :Rational)
   @eval Base.$op(::Zero, ::$T) = Zero()
