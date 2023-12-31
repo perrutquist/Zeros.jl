@@ -181,19 +181,18 @@ for op in [:fma :muladd]
     @eval Base.$op(::Zero, ::Zero, ::Zero) = Zero()
     @eval Base.$op(::Zero,::Number,::Zero) = Zero()
     @eval Base.$op(::Number,::Zero,::Zero) = Zero()
-    @eval Base.$op(x::Number, y::Number, ::Zero) = x*y
-    @eval Base.$op(::One, x::Number, y::Number) = x+y
-    @eval Base.$op(x::Number, ::One, y::Number) = x+y
-    for T in (Real, Complex) # Special definitions for Real and Complex to avoid method ambiguities.
-        @eval Base.$op(::Zero,::$T,::Zero) = Zero()
-        @eval Base.$op(::$T,::Zero,::Zero) = Zero()
-        for T2 in (Real, Complex)
-            @eval Base.$op(x::$T, y::$T2, ::Zero) = x*y
-            @eval Base.$op(::One, x::$T, y::$T2) = x+y
-            @eval Base.$op(x::$T, ::One, y::$T2) = x+y
+    for T in (Integer, Real, Complex) # Especial definitions for Real and Complex to avoid method ambiguities.
+        if !(op === :fma && T===Complex) #fma is not defined for complex numbers
+            @eval Base.$op(::Zero,::$T,::Zero) = Zero()
+            @eval Base.$op(::$T,::Zero,::Zero) = Zero()
         end
     end
 end
+
+Base.muladd(::Zero,x::Complex,y::Number) = convert(promote_type(typeof(x),typeof(y)),y)
+Base.muladd(x::Complex,::Zero,y::Number) = convert(promote_type(typeof(x),typeof(y)),y)
+Base.muladd(x::Complex,::Zero,y::Complex) = convert(promote_type(typeof(x),typeof(y)),y)
+Base.muladd(x::Complex,::Zero,y::Real) = convert(promote_type(typeof(x),typeof(y)),y)
 
 for op in (:mod, :rem), T in (:Real, :Rational)
   @eval Base.$op(::Zero, ::$T) = Zero()
