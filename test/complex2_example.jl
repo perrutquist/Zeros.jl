@@ -64,10 +64,10 @@ using Test
 @test abs(-7i) === 7
 @test abs(-7im) === 7.0
 
-using BenchmarkTools
-f(x,y) = x + y*im
-g(x,y) = x + y*i
-a = one(BigFloat)
-b = one(BigFloat)
-@btime f($a, $b)
-@btime g($a, $b)
+#using BenchmarkTools
+#f(x,y) = x + y*im
+#g(x,y) = x + y*i
+#a = one(BigFloat)
+#b = one(BigFloat)
+#@btime f($a, $b)
+#@btime g($a, $b)
