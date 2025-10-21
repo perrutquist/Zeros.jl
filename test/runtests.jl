@@ -7,7 +7,8 @@ using Test: @inferred
     for a in ambiguities
         println(a[1], "\n", a[2], "\n")
     end
-    @test length(ambiguities) <= 10
+    #@test length(ambiguities) <= 10
+    @test length(ambiguities) <= 1
 end
 
 const Z = Zero()
@@ -277,18 +278,36 @@ end
     @test I:3 === Base.OneTo(3)
 end
 
-# @testset "muladd" begin
-#     @test fma(Z,1,Z) === Z
-#     @test fma(Z,1.0,Z) === Z
-#     @test muladd(Z,1,Z) === Z
-#     @test muladd(Z,1.0,Z) === Z
-#     @test fma(Z,1,3) === 3
-#     @test fma(Z,1.0,3) === 3.0
-#     @test muladd(Z,1,3) === 3
-#     @test muladd(Z,1.0,3) === 3.0
-#     @test fma(Z,Z,Z) === Z
-#     @test muladd(Z,Z,Z) === Z
-# end
+@testset "muladd" begin
+    @test fma(Z,1,Z) === Z
+    @test fma(1,Z,Z) === Z
+    @test fma(Z,1.0,Z) === Z
+    @test fma(1.0,Z,Z) === Z
+    @test muladd(Z,1,Z) === Z
+    @test muladd(1,Z,Z) === Z
+    @test muladd(Z,1.0,Z) === Z
+    @test muladd(1.0,Z,Z) === Z
+    @test muladd(Z,im,Z) === Z
+    @test muladd(im,Z,Z) === Z
+    @test fma(Z,1,3) === 3
+    @test fma(1,Z,3) === 3
+    @test fma(Z,1.0,3) === 3.0
+    @test fma(1.0,Z,3) === 3.0
+    @test muladd(Z,1,3) === 3
+    @test muladd(1,Z,3) === 3
+    @test muladd(Z,1.0,3) === 3.0
+    @test muladd(1.0,Z,3) === 3.0
+    @test muladd(Z,1.0im,3) === 3.0 + 0.0im
+    @test muladd(1.0im,Z,3) === 3.0 + 0.0im
+    @test fma(Z,Z,Z) === Z
+    @test muladd(Z,Z,Z) === Z
+
+    @test invoke(muladd, Tuple{Zero,Number,Zero}, Z, 2.0, Z) === Z
+    @test invoke(muladd, Tuple{Number,Zero,Zero}, 2.0, Z, Z) === Z
+    @test invoke(muladd, Tuple{Zero,Complex,Number}, Z, 1.0im, 3) === 3.0 + 0.0im
+    @test invoke(muladd, Tuple{Complex,Zero,Number}, 1.0im, Z, 3) === 3.0 + 0.0im
+    @test invoke(muladd, Tuple{Complex,Zero,Complex}, 1.0im, Z, 3.0f0 + 0.0f0*im) === 3.0 + 0.0im
+end
 
 @testset "Complex" begin
     @test Z*im === Z
