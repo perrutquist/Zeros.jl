@@ -234,14 +234,39 @@ end
     @test Float64(Z) === 0.0
     @test Float64(I) === 1.0
 
-    @test Zero()^0 === true
-    @test Zero()^1 === false
+    t0(x) = x^0
+    tm0(x) = Base.literal_pow(^, x, Val(-0.0))
+    t1(x) = x^1
+    t2(x) = x^2
+    t_lit_throw(x) = x^-2
 
-    # Bypass litteral_pow
+    #test literal_pow
+    @test t0(Zero()) === I
+    @test tm0(Zero()) === I
+    @test t1(Zero()) === Z
+    @test t2(Zero()) === Z
+    @inferred t0(Zero())
+    @inferred tm0(Zero())
+    @inferred t1(Zero())
+    @inferred t2(Zero())
+
+    @test_throws DivideError t_lit_throw(Zero())
+
+    # Bypass literal_pow
     n0 = 0
     @test Zero()^n0 === true
     n1 = 1
     @test Zero()^n1 === false
+    n1f = 1.0
+    @test Zero()^n1f === false
+
+    @inferred Zero()^n1f
+
+    nm1 = -1
+    @test_throws DivideError Zero()^nm1
+
+    nm0 = -0.0
+    @test Zero()^nm0 === true
 
     @test hypot(-7, Z) === 7
     @test hypot(Z, -7) === 7
