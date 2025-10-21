@@ -1,6 +1,6 @@
 # Zeros.jl
 
-[![Build Status](https://travis-ci.com/perrutquist/Zeros.jl.svg?branch=master)](https://travis-ci.com/perrutquist/Zeros.jl)
+[![Build Status](https://github.com/perrutquist/Zeros.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/perrutquist/Zeros.jl/actions/workflows/CI.yml?query=branch%3Amaster)
 [![codecov.io](http://codecov.io/github/perrutquist/Zeros.jl/coverage.svg?branch=master)](http://codecov.io/github/perrutquist/Zeros.jl?branch=master)
 
 This module provides singular datatypes named Zero and One. All instances of each datatype are identical, and represent the values zero and one, respectively. This is a light-weight alternative to [StaticNumbers.jl](https://github.com/perrutquist/StaticNumbers.jl) when only these two values are needed.
