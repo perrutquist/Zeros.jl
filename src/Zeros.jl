@@ -189,10 +189,11 @@ for op in [:fma :muladd]
     end
 end
 
-Base.muladd(::Zero,x::Complex,y::Number) = convert(promote_type(typeof(x),typeof(y)),y)
-Base.muladd(x::Complex,::Zero,y::Number) = convert(promote_type(typeof(x),typeof(y)),y)
-Base.muladd(x::Complex,::Zero,y::Complex) = convert(promote_type(typeof(x),typeof(y)),y)
-Base.muladd(x::Complex,::Zero,y::Real) = convert(promote_type(typeof(x),typeof(y)),y)
+Base.muladd(::Zero, x::Complex, y::Number) = convert(promote_type(typeof(x),typeof(y)),y)
+Base.muladd(::Zero, x::Complex, y::Union{Real, Complex}) = convert(promote_type(typeof(x),typeof(y)),y)
+Base.muladd(x::Complex, ::Zero, y::Number) = convert(promote_type(typeof(x),typeof(y)),y)
+Base.muladd(x::Complex, ::Zero, y::Complex) = convert(promote_type(typeof(x),typeof(y)),y)
+Base.muladd(x::Complex, ::Zero, y::Real) = convert(promote_type(typeof(x),typeof(y)),y)
 
 for op in (:mod, :rem), T in (:Real, :Rational)
   @eval Base.$op(::Zero, ::$T) = Zero()
