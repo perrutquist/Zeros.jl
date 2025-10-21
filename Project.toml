@@ -1,7 +1,7 @@
 name = "Zeros"
 uuid = "bd1ec220-6eb4-527a-9b49-e79c3db6233b"
 authors = ["Per Rutquist <per.rutquist@gmail.com>"]
-version = "0.3.0"
+version = "0.4.0"
 
 [compat]
 julia = "1.0"
