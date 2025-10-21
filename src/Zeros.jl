@@ -148,11 +148,33 @@ Base.hypot(x::Number, ::Zero) = abs(x)
 Base.hypot(::Zero, ::Zero) = Zero()
 
 # ^ has a lot of very specific methods in Base....
-for T in (Float16, Float32, Float64, BigFloat, AbstractFloat, Rational, Complex{<:AbstractFloat}, Complex{<:Integer}, Integer, BigInt)
+for T in (Float16, Float32, Union{Float16, Float32}, Float64, BigFloat, AbstractFloat, Rational, Complex{<:AbstractFloat}, Complex{<:Integer}, Bool, Integer, BigInt)
+
     Base.:^(::T, ::Zero) = One()
+
+    # We "promote" `Zero` to `false` here so the return value is iferred (Bool).
+    # Otherwise it would be Union{One,Zero}.
+    function Base.:^(::Zero, p::T)
+        if iszero(p)
+            return true
+        end
+        signbit(p) && throw(DivideError())
+        return false
+    end
+
 end
 
-Base.to_power_type(::Zero) = false
+Base.:^(::Zero, ::Zero) = One()
+
+# In `Base.literal_pow` the exponent is known at compile time
+# So we are able to return an inferred `Zero` or `One`.
+function Base.literal_pow(::typeof(Base.:^), ::Zero, ::Val{p}) where p
+    if iszero(p)
+        return One()
+    end
+    signbit(p) && throw(DivideError())
+    return Zero()
+end
 
 # # Avoid promotion of triplets
 # for op in [:fma :muladd]
