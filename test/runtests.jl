@@ -301,6 +301,12 @@ end
     @test muladd(1.0im,Z,3) === 3.0 + 0.0im
     @test fma(Z,Z,Z) === Z
     @test muladd(Z,Z,Z) === Z
+
+    @test invoke(muladd, Tuple{Zero,Number,Zero}, Z, 2.0, Z) === Z
+    @test invoke(muladd, Tuple{Number,Zero,Zero}, 2.0, Z, Z) === Z
+    @test invoke(muladd, Tuple{Zero,Complex,Number}, Z, 1.0im, 3) === 3.0 + 0.0im
+    @test invoke(muladd, Tuple{Complex,Zero,Number}, 1.0im, Z, 3) === 3.0 + 0.0im
+    @test invoke(muladd, Tuple{Complex,Zero,Complex}, 1.0im, Z, 3.0f0 + 0.0f0*im) === 3.0 + 0.0im
 end
 
 @testset "Complex" begin
