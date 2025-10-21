@@ -73,7 +73,7 @@ Base.inv(::One) = One()
 Base.inv(::Zero) = throw(DivideError())
 
 # Loop over rounding modes in order to make methods specific enough to avoid ambiguities.
-for R in (RoundingMode, RoundingMode{:Down}, RoundingMode{:Up}, Union{RoundingMode{:Nearest}, RoundingMode{:NearestTiesAway}, RoundingMode{:NearestTiesUp}})
+for R in (RoundingMode, RoundingMode{:Down}, RoundingMode{:Up}, RoundingMode{:FromZero}, Union{RoundingMode{:Nearest}, RoundingMode{:NearestTiesAway}, RoundingMode{:NearestTiesUp}})
     Base.div(x::Integer, ::One, ::R) = x
 end
 
