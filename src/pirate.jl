@@ -10,7 +10,7 @@ respectively. The same will be true for `zero()` and `one()` without arguments.
 The functions `zero(Any)` and `one(Any)` will also return `Zero()` and `One()`, respectively,
 which in turn will make `sum([])` and `prod([])` return those values.
 
-Finally, `sin(π)` and `tan(π)` will return `Zero()`, fixing a bug in Base.
+Finally, `sin(π)` and `tan(π)` will return `Zero()`.
 """
 macro pirate(m::Symbol)
     esc(pirate_code(Val(m)))
