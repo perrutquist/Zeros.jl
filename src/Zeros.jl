@@ -45,6 +45,14 @@ for T in (:Number, :Complex, :Rational, :BigFloat, :Zero, :One)
     @eval One(x::$T) = isone(x) ? One() : throw(InexactError(:One, One, x))
 end
 
+# Some useful definition for AbstractArray with Union eltype 
+Union{Zero, T}(x::Number) where {T<:Number} = T(x)::T
+Union{One, T}(x::Number) where {T<:Number} = T(x)::T
+Union{StaticBool, T}(x::Number) where {T<:Number} = T(x)::T
+Union{Zero, T}(x::Union{Zero, T}) where {T<:Number} = x
+Union{One, T}(x::Union{One, T}) where {T<:Number} = x
+Union{StaticBool, T}(x::Union{StaticBool, T}) where {T<:Number} = x
+
 Base.zero(::StaticBool) = Zero()
 Base.zero(::Type{<:StaticBool}) = Zero()
 Base.one(::StaticBool) = One()

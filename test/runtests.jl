@@ -31,6 +31,21 @@ const I = One()
     @test promote_type(Zero, Complex{Float64}) === Complex{Float64}
 end
 
+@testset "Union Types constructors" begin
+    @test Union{Zero,Float64}(1.0) === 1.0
+    @test Union{Zero,Float64}(Zero()) === Zero()
+    @test Union{Zero,Float64}(1) === 1.0
+
+    @test Union{One,Float64}(1.0) === 1.0
+    @test Union{One,Float64}(One()) === One()
+    @test Union{One,Float64}(1) === 1.0
+
+    @test Union{Zero,One,Float64}(1.0) === 1.0
+    @test Union{Zero,One,Float64}(Zero()) === Zero()
+    @test Union{Zero,One,Float64}(One()) === One()
+    @test Union{Zero,One,Float64}(1) === 1.0
+end
+
 @testset "Real" begin
     @test iszero(Z) === true
     @test isone(I) === true
