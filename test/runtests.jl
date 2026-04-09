@@ -360,6 +360,14 @@ if VERSION ≥ v"1.2" # no test on 1.0 because of BenchmarkTools dependency
     end
 end
 
+@testset "Random" begin
+    @test rand(Zero) === Zero()
+    @test rand(One) === One()
+
+    @test rand(Zero,3) == zeros(Zero,3)
+    @test rand(One,3) == ones(One,3)
+end
+
 Zeros.@pirate Base
 
 @testset "piracy" begin

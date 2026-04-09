@@ -239,19 +239,26 @@ Base.Checked.checked_mul(x::StaticBool, y::StaticBool) = x*y
 Base.Checked.mul_with_overflow(x::StaticBool, y::StaticBool) = (x*y, false)
 Base.Checked.checked_add(x::StaticBool, y::StaticBool) = x+y
 
-if VERSION < v"1.2"
+@static if VERSION < v"1.2"
     # Disambiguation needed for older Julia versions
     Base.copysign(::Zero, x::Unsigned) = Zero()
     Base.flipsign(::Zero, x::Unsigned) = Zero()
 end
 
-if VERSION ≥ v"1.3"
+@static if VERSION ≥ v"1.3"
     # @eval, because this needs to parse in Julia 1.0, even though it will not run
     @eval begin
         export $(Symbol("𝟎")), $(Symbol("𝟏")) 
         const $(Symbol("𝟎")) = Zero()  # \bfzero <tab>
         const $(Symbol("𝟏")) = One()   # \bfone <tab>
     end
+end
+
+# From v1.9 on we define this method in the ZerosRandomExt extension, which is the proper
+# way of implementing functionallity into other modules without making it an explict dependency
+@static if VERSION < v"1.9"
+    import Random
+    Random.rand(::Random.AbstractRNG, ::Random.SamplerType{T}) where T<:StaticBool = T()
 end
 
 include("pirate.jl")
