@@ -1,6 +1,7 @@
 using Zeros
 using Test
 using Test: @inferred
+using SIMD
 
 @testset "ambiguities" begin
     ambiguities = detect_ambiguities(Base, Zeros)
@@ -381,6 +382,50 @@ end
 
     @test rand(Zero,3) == zeros(Zero,3)
     @test rand(One,3) == ones(One,3)
+end
+
+#Needs pacakge extensions support
+if VERSION >= v"1.9"
+
+    @testset "SIMD Extension" begin
+        let v = Vec(-2.0,2.0,0.01,0.5)
+
+            #We want to propagate Zero's
+            @test v*Zero() === Zero()
+            @test Zero()*v === Zero()
+            @test v*One() === v
+            @test One()*v === v
+
+            for op in (+,-,rem,^,/,min,max,==,!=,>,>=,<,<=)
+                @test op(v,Zero()) === op(v, zero(v))
+                @test op(Zero(),v) === op(zero(v), v)
+                @test op(v,One()) === op(v, one(v))
+                @test op(One(),v) === op(one(v), v)
+            end
+
+            for op in (fma, muladd)
+                #We want to propagate Zero's
+                @test op(Zero(), v, Zero()) === Zero()
+                @test op(v, Zero(), Zero()) === Zero()
+                for e1 in (v, Zero(), One())
+                    for e2 in (v, Zero(), One())
+                        for e3 in (v, Zero(), One())
+                            #test only if case has at least one of <:StaticBool and one of <:SIMD.Vec
+                            if !all(map(x->isa(x,Zeros.StaticBool), (e1,e2,e3))) && !all(map(x->isa(x,Vec), (e1,e2,e3)))
+                                @test op(e1,e2,e3) === (e1 * e2 + e3)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        let vi = Vec(-3,2,-1,4)
+            @test div(Zero(), vi) === div(zero(vi), vi)
+            @test div(One(), vi) === div(one(vi), vi)
+            @test div(vi, One()) === div(vi, one(vi))
+        end
+    end
+
 end
 
 Zeros.@pirate Base
