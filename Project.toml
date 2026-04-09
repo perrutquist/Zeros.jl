@@ -1,20 +1,24 @@
 name = "Zeros"
 uuid = "bd1ec220-6eb4-527a-9b49-e79c3db6233b"
-authors = ["Per Rutquist <per.rutquist@gmail.com>"]
 version = "0.4.0"
+authors = ["Per Rutquist <per.rutquist@gmail.com>"]
 
 [weakdeps]
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SIMD = "fdea26ae-647d-5447-a871-4b548cad5224"
 
 [extensions]
 ZerosRandomExt = "Random"
+ZerosSIMDExt = "SIMD"
 
 [compat]
 Random = "1"
+SIMD = "3"
 julia = "1.0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+SIMD = "fdea26ae-647d-5447-a871-4b548cad5224"
 
 [targets]
-test = ["Test"]
+test = ["Test", "SIMD"]
