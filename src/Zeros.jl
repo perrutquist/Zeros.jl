@@ -185,23 +185,45 @@ function Base.literal_pow(::typeof(Base.:^), ::Zero, ::Val{p}) where p
 end
 
 # Functions that perform a*b+c in one go
-for op in [:fma :muladd]
-    @eval Base.$op(::Zero, ::Zero, ::Zero) = Zero()
-    @eval Base.$op(::Zero,::Number,::Zero) = Zero()
-    @eval Base.$op(::Number,::Zero,::Zero) = Zero()
-    for T in (Integer, Real, Complex) # Especial definitions for Real and Complex to avoid method ambiguities.
-        if !(op === :fma && T===Complex) #fma is not defined for complex numbers
-            @eval Base.$op(::Zero,::$T,::Zero) = Zero()
-            @eval Base.$op(::$T,::Zero,::Zero) = Zero()
+Base.muladd(::Zero,::Number, z::Number) = z
+Base.muladd(::Number,::Zero, z::Number) = z
+Base.muladd(::Zero,::Zero, z::Number) = z
+Base.muladd(x::Number, y::Number, ::Zero) = x*y
+Base.muladd(::Number, ::Zero, ::Zero) = Zero()
+Base.muladd(::Zero, ::Number, ::Zero) = Zero()
+Base.muladd(::Zero, ::Zero, ::Zero) = Zero()
+for T in (Real, Complex)
+    @eval Base.muladd(::Zero,::$T, z::$T) = z
+    @eval Base.muladd(::$T,::Zero, z::$T) = z
+    @eval Base.muladd(::Zero,::Zero, z::$T) = z
+    @eval Base.muladd(x::$T, y::$T, ::Zero) = x*y
+    @eval Base.muladd(::$T, ::Zero, ::Zero) = Zero()
+    @eval Base.muladd(::Zero, ::$T, ::Zero) = Zero()
+    for T2 in (Real, Complex)
+        if (T2 !== T)
+            @eval Base.muladd(::Zero,::$T, z::$T2) = z
+            @eval Base.muladd(::Zero,::$T, z::$(Union{T2,T})) = z
+            @eval Base.muladd(::$T,::Zero, z::$T2) = z
+            @eval Base.muladd(x::$T, y::$T2, ::Zero) = x*y
         end
     end
 end
+Base.muladd(::Zero,::Zero, z::Union{Complex,Real}) = z
 
-Base.muladd(::Zero, x::Complex, y::Number) = convert(promote_type(typeof(x),typeof(y)),y)
-Base.muladd(::Zero, x::Complex, y::Union{Real, Complex}) = convert(promote_type(typeof(x),typeof(y)),y)
-Base.muladd(x::Complex, ::Zero, y::Number) = convert(promote_type(typeof(x),typeof(y)),y)
-Base.muladd(x::Complex, ::Zero, y::Complex) = convert(promote_type(typeof(x),typeof(y)),y)
-Base.muladd(x::Complex, ::Zero, y::Real) = convert(promote_type(typeof(x),typeof(y)),y)
+Base.fma(::Zero,::Real, z::Real) = z
+Base.fma(::Real,::Zero, z::Real) = z
+Base.fma(::Zero,::Zero, z::Real) = z
+Base.fma(x::Real, y::Real, ::Zero) = x*y
+Base.fma(::Real, ::Zero, ::Zero) = Zero()
+Base.fma(::Zero, ::Real, ::Zero) = Zero()
+Base.fma(::Zero, ::Zero, ::Zero) = Zero()
+
+Base.fma(::Zero,::Integer, z::Integer) = z
+Base.fma(::Integer,::Zero, z::Integer) = z
+Base.fma(::Zero,::Zero, z::Integer) = z
+Base.fma(x::Integer, y::Integer, ::Zero) = x*y
+Base.fma(::Integer, ::Zero, ::Zero) = Zero()
+Base.fma(::Zero, ::Integer, ::Zero) = Zero()
 
 for op in (:mod, :rem), T in (:Real, :Rational)
   @eval Base.$op(::Zero, ::$T) = Zero()
