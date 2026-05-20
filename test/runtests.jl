@@ -8,8 +8,7 @@ using SIMD
     for a in ambiguities
         println(a[1], "\n", a[2], "\n")
     end
-    #@test length(ambiguities) <= 10
-    @test length(ambiguities) <= 1
+    @test length(ambiguities) == 0
 end
 
 const Z = Zero()
@@ -295,34 +294,32 @@ end
 end
 
 @testset "muladd" begin
-    @test fma(Z,1,Z) === Z
-    @test fma(1,Z,Z) === Z
-    @test fma(Z,1.0,Z) === Z
-    @test fma(1.0,Z,Z) === Z
-    @test muladd(Z,1,Z) === Z
-    @test muladd(1,Z,Z) === Z
-    @test muladd(Z,1.0,Z) === Z
-    @test muladd(1.0,Z,Z) === Z
-    @test muladd(Z,im,Z) === Z
-    @test muladd(im,Z,Z) === Z
-    @test fma(Z,1,3) === 3
-    @test fma(1,Z,3) === 3
-    @test fma(Z,1.0,3) === 3.0
-    @test fma(1.0,Z,3) === 3.0
-    @test muladd(Z,1,3) === 3
-    @test muladd(1,Z,3) === 3
-    @test muladd(Z,1.0,3) === 3.0
-    @test muladd(1.0,Z,3) === 3.0
-    @test muladd(Z,1.0im,3) === 3.0 + 0.0im
-    @test muladd(1.0im,Z,3) === 3.0 + 0.0im
-    @test fma(Z,Z,Z) === Z
-    @test muladd(Z,Z,Z) === Z
+    for a in (One(), Zero(), 2//1, 2, 2.0, 2.0 + 0.0im)
+        @test Base.invoke(muladd, Tuple{Number, Zero, Zero} , a, Zero(), Zero()) === Zero() 
+        @test Base.invoke(muladd, Tuple{Zero, Number, Zero}, Zero() , a, Zero()) === Zero() 
+        @test Base.invoke(muladd, Tuple{Zero, Zero, Number}, Zero(), Zero() , a) === a 
+        for b in (One(), Zero(), 3//1, 3, 3.0, 3.0 + 0.0im)
+            @test muladd(a, b, Zero()) === a*b
+            @test muladd(a, Zero(), b) === b
+            @test muladd(Zero(), a, b) === b
+            @test muladd(Zero(), Zero(), b) === b
+            @test Base.invoke(muladd, Tuple{Zero, Number, Number}, Zero() , a, b) === b 
+            @test Base.invoke(muladd, Tuple{Number, Zero, Number}, a, Zero() , b) === b 
+            @test Base.invoke(muladd, Tuple{Number, Number, Zero} , a, b, Zero()) === a*b 
+        end
+    end
+    @test Base.invoke(muladd, Tuple{Zero, Zero, Union{Real, Complex}}, Zero(), Zero() , 2.0+im) === 2.0+im 
+    @test Base.invoke(muladd, Tuple{Zero, Real, Union{Real, Complex}}, Zero(), 1.0 , 2.0+im) === 2.0+im 
 
-    @test invoke(muladd, Tuple{Zero,Number,Zero}, Z, 2.0, Z) === Z
-    @test invoke(muladd, Tuple{Number,Zero,Zero}, 2.0, Z, Z) === Z
-    @test invoke(muladd, Tuple{Zero,Complex,Number}, Z, 1.0im, 3) === 3.0 + 0.0im
-    @test invoke(muladd, Tuple{Complex,Zero,Number}, 1.0im, Z, 3) === 3.0 + 0.0im
-    @test invoke(muladd, Tuple{Complex,Zero,Complex}, 1.0im, Z, 3.0f0 + 0.0f0*im) === 3.0 + 0.0im
+    for a in (One(), Zero(), 2//1, 2, 2.0)
+        for b in (One(), Zero(), 3//1, 3, 3.0)
+            @test fma(a, b, Zero()) === a*b
+            @test fma(a, Zero(), b) === b
+            @test fma(Zero(), a, b) === b
+            @test fma(Zero(), Zero(), b) === b
+        end
+    end
+
 end
 
 @testset "Complex" begin
