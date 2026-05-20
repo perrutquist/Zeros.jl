@@ -354,6 +354,8 @@ end
 @testset "error handling" begin
     @test_throws InexactError Zero(1)
     @test_throws InexactError convert(Zero, 0.1)
+    @test_throws InexactError convert(Zero, One())
+    @test_throws InexactError convert(One, Zero())
     @test_throws DivideError 1.0/Z
     @test_throws DivideError (1.0+2.0im)/Z
     @test_throws DivideError Z/Z
