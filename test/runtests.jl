@@ -297,6 +297,7 @@ end
     for a in (One(), Zero(), 2//1, 2, 2.0, 2.0 + 0.0im)
         @test Base.invoke(muladd, Tuple{Number, Zero, Zero} , a, Zero(), Zero()) === Zero() 
         @test Base.invoke(muladd, Tuple{Zero, Number, Zero}, Zero() , a, Zero()) === Zero() 
+        @test Base.invoke(muladd, Tuple{Zero, Complex, Number}, Zero(), 1.0 + 0.5im , a) === a 
         @test Base.invoke(muladd, Tuple{Zero, Zero, Number}, Zero(), Zero() , a) === a 
         for b in (One(), Zero(), 3//1, 3, 3.0, 3.0 + 0.0im)
             @test muladd(a, b, Zero()) === a*b

@@ -209,6 +209,7 @@ for T in (Real, Complex)
     end
 end
 Base.muladd(::Zero,::Zero, z::Union{Complex,Real}) = z
+Base.muladd(::Zero,::Complex, z::Number) = z
 
 Base.fma(::Zero,::Real, z::Real) = z
 Base.fma(::Real,::Zero, z::Real) = z
